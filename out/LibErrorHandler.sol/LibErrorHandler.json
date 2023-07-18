@@ -1,0 +1,34 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/libraries/LibErrorHandler.sol",
+    "id": 84,
+    "exportedSymbols": {},
+    "nodeType": "SourceUnit",
+    "src": "32:24:2",
+    "nodes": [
+      {
+        "id": 83,
+        "nodeType": "PragmaDirective",
+        "src": "32:24:2",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".19"
+        ]
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 2
+}
