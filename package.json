@@ -1,0 +1,22 @@
+{
+  "name": "smart-contracts-core",
+  "version": "1.0.0",
+  "description": "Smart contracts core.",
+  "author": "Axie Infinity Engineering <engineering@axieinfinity.com>",
+  "license": "MIT",
+  "repository": "https://github.com/axieinfinity/smart-contracts-core.git",
+  "files": [
+    "src/**/*.sol"
+  ],
+  "devDependencies": {
+    "husky": "^8.0.3"
+  },
+  "lint-staged": {
+    "{src,script,test}/**/*.sol": [
+      "forge fmt"
+    ]
+  },
+  "scripts": {
+    "prepare": "husky install"
+  }
+}
