@@ -1,49 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { LibErrorHandler } from "../LibErrorHandler.sol";
-
-using { toAmount } for Gas global;
-
-enum Gas {
-  Strictly,
-  NoGriefing,
-  ForwardAll,
-  NoStorageWrite
-}
-
-/// @dev see: https://github.com/axieinfinity/ronin-dpos-contracts/pull/195
-uint256 constant GAS_STIPEND_STRICT = 0;
-
-/// @dev Suggested gas stipend for contract receiving NATIVE
-/// that disallows any storage writes.
-uint256 constant GAS_STIPEND_NO_STORAGE_WRITES = 2_300;
-
-/// @dev Suggested gas stipend for contract receiving NATIVE to perform a few
-/// storage reads and writes, but low enough to prevent griefing.
-/// Multiply by a small constant (e.g. 2), if needed.
-uint256 constant GAS_STIPEND_NO_GRIEF = 100_000;
-
-function toAmount(Gas gas) view returns (uint256) {
-  if (gas == Gas.ForwardAll) return gasleft();
-  if (gas == Gas.NoGriefing) return GAS_STIPEND_NO_GRIEF;
-  if (gas == Gas.NoStorageWrite) return GAS_STIPEND_NO_STORAGE_WRITES;
-  return GAS_STIPEND_STRICT;
-}
 
 /**
  * @title NativeTransferHelper
  */
 library LibNativeTransfer {
-  using Strings for *;
   using LibErrorHandler for bool;
 
   /**
    * @dev Transfers Native Coin and wraps result for the method caller to a recipient.
    */
-  function safeTransfer(address to, uint256 value, Gas gas) internal {
-    (bool success, bytes memory returnOrRevertData) = trySendValue(to, value, gas.toAmount());
+  function transfer(address to, uint256 value, uint256 gasAmount) internal {
+    (bool success, bytes memory returnOrRevertData) = trySendValue(to, value, gasAmount);
     success.handleRevert(bytes4(0x0), returnOrRevertData);
   }
 
