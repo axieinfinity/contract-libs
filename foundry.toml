@@ -6,13 +6,6 @@ ffi = true
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 
-remappings = [
-    'contract-libs/=src/',
-    'forge-std/=lib/forge-std/src/',
-    'ds-test/=lib/forge-std/lib/ds-test/src/',
-    '@openzeppelin/=lib/openzeppelin-contracts/',
-]
-
 solc = '0.8.23'
 evm_version = 'istanbul'
 use_literal_content = true

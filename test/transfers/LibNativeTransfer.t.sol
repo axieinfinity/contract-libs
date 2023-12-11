@@ -2,7 +2,7 @@
 pragma solidity ^0.8.23;
 
 import { Test } from "forge-std/Test.sol";
-import { LibNativeTransfer } from "contract-libs/transfers/LibNativeTransfer.sol";
+import { LibNativeTransfer } from "src/transfers/LibNativeTransfer.sol";
 
 contract LibNativeTransferTest is Test {
   function testFork_RevertWhen_TransferNativeToContractWithoutFallback_safeTransfer(
