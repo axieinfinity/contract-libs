@@ -1,4 +1,4 @@
-# smart-contracts-core
+# contract-libs
 
 The collections of smart contracts that power the Axie Land Delegation.
 
