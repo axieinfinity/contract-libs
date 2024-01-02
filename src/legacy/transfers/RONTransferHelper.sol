@@ -15,13 +15,11 @@ library RONTransferHelper {
 
     if (!success) {
       revert(
-        string(
-          abi.encodePacked(
-            "TransferHelper: could not transfer RON to ",
-            Strings.toHexString(uint160(address(to)), 20),
-            " value ",
-            Strings.toHexString(value)
-          )
+        string.concat(
+          "TransferHelper: could not transfer RON to ",
+          Strings.toHexString(uint160(address(to)), 20),
+          " value ",
+          Strings.toHexString(value)
         )
       );
     }

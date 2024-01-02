@@ -23,17 +23,15 @@ library TransferFromHelper {
 
     if (!success || !(data.length == 0 || abi.decode(data, (bool)))) {
       revert(
-        string(
-          abi.encodePacked(
-            "TransferFromHelper: could not transfer token ",
-            Strings.toHexString(uint160(token), 20),
-            " from ",
-            Strings.toHexString(uint160(from), 20),
-            " to ",
-            Strings.toHexString(uint160(to), 20),
-            " value ",
-            Strings.toHexString(value)
-          )
+        string.concat(
+          "TransferFromHelper: could not transfer token ",
+          Strings.toHexString(uint160(token), 20),
+          " from ",
+          Strings.toHexString(uint160(from), 20),
+          " to ",
+          Strings.toHexString(uint160(to), 20),
+          " value ",
+          Strings.toHexString(value)
         )
       );
     }
