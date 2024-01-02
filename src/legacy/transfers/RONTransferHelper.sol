@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 /**
  * @title RONTransferHelper
  */
-library LibRONTransfer {
+library RONTransferHelper {
   /**
    * @dev Transfers RON and wraps result for the method caller to a recipient.
    */
@@ -17,7 +17,7 @@ library LibRONTransfer {
       revert(
         string(
           abi.encodePacked(
-            "RONTransferHelper: could not transfer RON to ",
+            "TransferHelper: could not transfer RON to ",
             Strings.toHexString(uint160(address(_to)), 20),
             " value ",
             Strings.toHexString(_value)

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../interfaces/IWRON.sol";
-import "../interfaces/IWRONHelper.sol";
-import "./LibRONTransfer.sol";
-import "./LibTokenTransferFrom.sol";
-import "./LibTokenTransfer.sol";
+import "../../interfaces/IWRON.sol";
+import "../../interfaces/IWRONHelper.sol";
+import "./RONTransferHelper.sol";
+import "./TransferFromHelper.sol";
+import "./TransferHelper.sol";
 
-library LibRONTransferExtended {
+library RONTransferHelperExtended {
   /**
    * @dev Safely unwraps tokens if it is WRON token and transfers them to a specified recipient.
    * @param _wron Address of the WRON contract.
@@ -21,14 +21,14 @@ library LibRONTransferExtended {
   function safeUnwrapTokenAndTransfer(IWRON _wron, address _token, address payable _to, uint256 _amount) internal {
     if (_token == address(_wron)) {
       // Check whether the recipient receives RON
-      if (LibRONTransfer.send(_to, 0)) {
+      if (RONTransferHelper.send(_to, 0)) {
         _wron.withdraw(_amount);
-        LibRONTransfer.safeTransfer(_to, _amount);
+        RONTransferHelper.safeTransfer(_to, _amount);
         return;
       }
     }
 
-    LibTokenTransfer.safeTransfer(_token, _to, _amount);
+    TransferHelper.safeTransfer(_token, _to, _amount);
   }
 
   /**
@@ -49,14 +49,14 @@ library LibRONTransferExtended {
   ) internal {
     if (_token == address(_wron)) {
       // Check whether the recipient receives RON
-      if (LibRONTransfer.send(_to, 0)) {
+      if (RONTransferHelper.send(_to, 0)) {
         _wron.approve(address(_wronHelper), _amount);
         _wronHelper.withdrawTo(_to, _amount);
         return;
       }
     }
 
-    LibTokenTransfer.safeTransfer(_token, _to, _amount);
+    TransferHelper.safeTransfer(_token, _to, _amount);
   }
 
   /**
@@ -79,15 +79,15 @@ library LibRONTransferExtended {
   ) internal {
     if (_token == address(_wron)) {
       // Check whether the recipient receives RON
-      if (LibRONTransfer.send(_to, 0)) {
-        LibTokenTransferFrom.safeTransferFrom(_token, _from, address(this), _amount);
+      if (RONTransferHelper.send(_to, 0)) {
+        TransferFromHelper.safeTransferFrom(_token, _from, address(this), _amount);
         IWRON(_wron).withdraw(_amount);
-        LibRONTransfer.safeTransfer(_to, _amount);
+        RONTransferHelper.safeTransfer(_to, _amount);
         return;
       }
     }
 
-    LibTokenTransferFrom.safeTransferFrom(_token, _from, _to, _amount);
+    TransferFromHelper.safeTransferFrom(_token, _from, _to, _amount);
   }
 
   /**
@@ -109,14 +109,14 @@ library LibRONTransferExtended {
   ) internal {
     if (_token == address(_wron)) {
       // Check whether the recipient receives RON
-      if (LibRONTransfer.send(_to, 0)) {
-        LibTokenTransferFrom.safeTransferFrom(_token, _from, address(this), _amount);
+      if (RONTransferHelper.send(_to, 0)) {
+        TransferFromHelper.safeTransferFrom(_token, _from, address(this), _amount);
         _wron.approve(address(_wronHelper), _amount);
         _wronHelper.withdrawTo(_to, _amount);
         return;
       }
     }
 
-    LibTokenTransferFrom.safeTransferFrom(_token, _from, _to, _amount);
+    TransferFromHelper.safeTransferFrom(_token, _from, _to, _amount);
   }
 }

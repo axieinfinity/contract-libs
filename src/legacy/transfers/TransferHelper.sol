@@ -4,19 +4,19 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * @title LibTokenTransfer
- * @dev Wraps transfer methods for ERC20 tokens that do not consistently return true/false or revert.
+ * @title TransferHelper
+ * @dev Wraps transfer methods for ERC20/native tokens that do not consistently return true/false or revert.
  */
-library LibTokenTransfer {
+library TransferHelper {
   /**
    * @dev Transfers token and wraps result for the method caller to a recipient.
    */
-  function safeTransfer(address token, address to, uint256 value) internal {
-    (bool success, bytes memory data) = token.call(
+  function safeTransfer(address _token, address _to, uint256 _value) internal {
+    (bool success, bytes memory data) = _token.call(
       abi.encodeWithSelector(
         0xa9059cbb, // IERC20.transfer.selector
-        to,
-        value
+        _to,
+        _value
       )
     );
 
@@ -25,11 +25,11 @@ library LibTokenTransfer {
         string(
           abi.encodePacked(
             "TransferHelper: could not transfer token ",
-            Strings.toHexString(uint160(token), 20),
+            Strings.toHexString(uint160(_token), 20),
             " to ",
-            Strings.toHexString(uint160(to), 20),
+            Strings.toHexString(uint160(_to), 20),
             " value ",
-            Strings.toHexString(value)
+            Strings.toHexString(_value)
           )
         )
       );
