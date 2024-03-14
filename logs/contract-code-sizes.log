@@ -1,0 +1,27 @@
+| Contract                  | Size (kB) | Margin (kB) |
+|---------------------------|-----------|-------------|
+| LibErrorHandler           | 0.086     | 24.49       |
+| LibNativeTransfer         | 0.086     | 24.49       |
+| LibSafeRange              | 0.086     | 24.49       |
+| Math                      | 0.086     | 24.49       |
+| MockERC20                 | 3.704     | 20.872      |
+| MockERC721                | 3.964     | 20.612      |
+| Panic                     | 0.086     | 24.49       |
+| RONTransferHelper         | 0.086     | 24.49       |
+| RONTransferHelperExtended | 0.086     | 24.49       |
+| SafeCast                  | 0.086     | 24.49       |
+| SignedMath                | 0.086     | 24.49       |
+| StdStyle                  | 0.086     | 24.49       |
+| Strings                   | 0.086     | 24.49       |
+| TransferFromHelper        | 0.086     | 24.49       |
+| TransferHelper            | 0.086     | 24.49       |
+| console                   | 0.086     | 24.49       |
+| console2                  | 0.086     | 24.49       |
+| safeconsole               | 0.086     | 24.49       |
+| stdError                  | 0.592     | 23.984      |
+| stdJson                   | 0.086     | 24.49       |
+| stdMath                   | 0.086     | 24.49       |
+| stdStorage                | 0.086     | 24.49       |
+| stdStorageSafe            | 0.086     | 24.49       |
+| stdToml                   | 0.086     | 24.49       |
+
