@@ -20,12 +20,9 @@ library RONTransferHelperExtended {
    */
   function safeUnwrapTokenAndTransfer(IWRON wron, address token, address payable to, uint256 amount) internal {
     if (token == address(wron)) {
-      // Check whether the recipient receives RON
-      if (RONTransferHelper.send(to, 0)) {
-        wron.withdraw(amount);
-        RONTransferHelper.safeTransfer(to, amount);
-        return;
-      }
+      wron.withdraw(amount);
+      RONTransferHelper.safeTransfer(to, amount);
+      return;
     }
 
     TransferHelper.safeTransfer(token, to, amount);
@@ -48,12 +45,9 @@ library RONTransferHelperExtended {
     uint256 amount
   ) internal {
     if (token == address(wron)) {
-      // Check whether the recipient receives RON
-      if (RONTransferHelper.send(to, 0)) {
-        wron.approve(address(wronHelper), amount);
-        wronHelper.withdrawTo(to, amount);
-        return;
-      }
+      wron.approve(address(wronHelper), amount);
+      wronHelper.withdrawTo(to, amount);
+      return;
     }
 
     TransferHelper.safeTransfer(token, to, amount);
@@ -74,13 +68,10 @@ library RONTransferHelperExtended {
     internal
   {
     if (token == address(wron)) {
-      // Check whether the recipient receives RON
-      if (RONTransferHelper.send(to, 0)) {
-        TransferFromHelper.safeTransferFrom(token, from, address(this), amount);
-        IWRON(wron).withdraw(amount);
-        RONTransferHelper.safeTransfer(to, amount);
-        return;
-      }
+      TransferFromHelper.safeTransferFrom(token, from, address(this), amount);
+      IWRON(wron).withdraw(amount);
+      RONTransferHelper.safeTransfer(to, amount);
+      return;
     }
 
     TransferFromHelper.safeTransferFrom(token, from, to, amount);
@@ -104,13 +95,10 @@ library RONTransferHelperExtended {
     uint256 amount
   ) internal {
     if (token == address(wron)) {
-      // Check whether the recipient receives RON
-      if (RONTransferHelper.send(to, 0)) {
-        TransferFromHelper.safeTransferFrom(token, from, address(this), amount);
-        wron.approve(address(wronHelper), amount);
-        wronHelper.withdrawTo(to, amount);
-        return;
-      }
+      TransferFromHelper.safeTransferFrom(token, from, address(this), amount);
+      wron.approve(address(wronHelper), amount);
+      wronHelper.withdrawTo(to, amount);
+      return;
     }
 
     TransferFromHelper.safeTransferFrom(token, from, to, amount);
