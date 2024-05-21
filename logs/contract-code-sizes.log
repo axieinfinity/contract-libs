@@ -1,0 +1,16 @@
+| Contract                  | Size (B) | Margin (B) |
+|---------------------------|----------|------------|
+| LibErrorHandler           |       86 |     24,490 |
+| LibEventRange             |       86 |     24,490 |
+| LibNativeTransfer         |       86 |     24,490 |
+| LibSafeRange              |       86 |     24,490 |
+| Math                      |       86 |     24,490 |
+| Panic                     |       86 |     24,490 |
+| RONTransferHelper         |       86 |     24,490 |
+| RONTransferHelperExtended |       86 |     24,490 |
+| SafeCast                  |       86 |     24,490 |
+| SignedMath                |       86 |     24,490 |
+| Strings                   |       86 |     24,490 |
+| TransferFromHelper        |       86 |     24,490 |
+| TransferHelper            |       86 |     24,490 |
+
