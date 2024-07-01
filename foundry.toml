@@ -29,3 +29,7 @@ runs = 256
 
 [invariant]
 runs = 256
+
+[dependencies]
+forge-std = { version = "1.8.2" }
+"@openzeppelin-contracts" = { version = "4.9.6" }
