@@ -34,6 +34,9 @@ jobs:
         with:
           version: nightly
 
+      - name: Update package
+        run: forge soldeer update
+
       - name: Run Forge build
         run: |
           forge --version
