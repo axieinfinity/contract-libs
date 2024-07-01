@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import { Test } from "forge-std/Test.sol";
+import { Test } from "@forge-std-1.8.2/Test.sol";
 import { LibNativeTransfer } from "src/transfers/LibNativeTransfer.sol";
 
 contract LibNativeTransferTest is Test {
