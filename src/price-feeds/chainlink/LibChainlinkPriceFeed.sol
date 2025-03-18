@@ -7,11 +7,11 @@ import { Math } from "../../../dependencies/openzeppelin-4.9.6/contracts/utils/m
 import { LibPowMath } from "../../math/LibPowMath.sol";
 
 struct ChainlinkPriceFeed {
-  AggregatorV2V3Interface aggregator;
-  uint8 pairDecimal;
-  uint8 tokenInDecimal;
-  uint8 tokenOutDecimal;
-  uint64 maxAcceptableAge;
+  AggregatorV2V3Interface _aggregator;
+  uint8 _pairDecimal;
+  uint8 _tokenInDecimal;
+  uint8 _tokenOutDecimal;
+  uint64 _maxAcceptableAge;
 }
 
 using LibChainlinkPriceFeed for ChainlinkPriceFeed global;
@@ -39,14 +39,14 @@ library LibChainlinkPriceFeed {
 
   /**
    * @dev Sets the price feed for a token.
-   * @param $priceFeed The Chainlink price feed storage variable.
+   * @param $ The Chainlink price feed storage variable.
    * @param aggregator The address of the Chainlink aggregator.
    * @param tokenInDecimal The decimal of token in.
    * @param tokenOutDecimal The decimal of token out.
    * @param maxAcceptableAge The max acceptable age for the price.
    */
   function set(
-    ChainlinkPriceFeed storage $priceFeed,
+    ChainlinkPriceFeed storage $,
     address aggregator,
     uint8 tokenInDecimal,
     uint8 tokenOutDecimal,
@@ -55,11 +55,11 @@ library LibChainlinkPriceFeed {
     if (tokenInDecimal > _MAX_DECIMALS) revert LargeDecimal(tokenInDecimal);
     if (tokenOutDecimal > _MAX_DECIMALS) revert LargeDecimal(tokenOutDecimal);
 
-    $priceFeed.aggregator = AggregatorV2V3Interface(aggregator);
-    $priceFeed.tokenInDecimal = tokenInDecimal;
-    $priceFeed.tokenOutDecimal = tokenOutDecimal;
-    $priceFeed.pairDecimal = AggregatorV2V3Interface(aggregator).decimals();
-    $priceFeed.maxAcceptableAge = maxAcceptableAge;
+    $._aggregator = AggregatorV2V3Interface(aggregator);
+    $._tokenInDecimal = tokenInDecimal;
+    $._tokenOutDecimal = tokenOutDecimal;
+    $._pairDecimal = AggregatorV2V3Interface(aggregator).decimals();
+    $._maxAcceptableAge = maxAcceptableAge;
 
     emit ChainlinkPriceFeedUpdated(
       AggregatorV2V3Interface(aggregator),
@@ -84,9 +84,9 @@ library LibChainlinkPriceFeed {
     uint256 price = quotePrice(priceFeed);
 
     // Scale the price to the same decimal as tokenOut
-    uint256 scaledPrice = scalePrice(price, priceFeed.pairDecimal, priceFeed.tokenOutDecimal);
+    uint256 scaledPrice = scalePrice(price, priceFeed._pairDecimal, priceFeed._tokenOutDecimal);
 
-    tokenOutAmount = Math.mulDiv(scaledPrice, tokenInAmount, 10 ** priceFeed.tokenInDecimal);
+    tokenOutAmount = Math.mulDiv(scaledPrice, tokenInAmount, 10 ** priceFeed._tokenInDecimal);
   }
 
   /**
@@ -104,9 +104,9 @@ library LibChainlinkPriceFeed {
 
     // Scale the price to the same decimal as tokenIn
     // The price is in tokenOut, so we need to inverseAndScalePrice it to get the tokenIn price
-    uint256 inversedPrice = inverseAndScalePrice(price, priceFeed.pairDecimal, priceFeed.tokenInDecimal);
+    uint256 inversedPrice = inverseAndScalePrice(price, priceFeed._pairDecimal, priceFeed._tokenInDecimal);
 
-    tokenInAmount = Math.mulDiv(inversedPrice, tokenOutAmount, 10 ** priceFeed.tokenOutDecimal);
+    tokenInAmount = Math.mulDiv(inversedPrice, tokenOutAmount, 10 ** priceFeed._tokenOutDecimal);
   }
 
   /**
@@ -115,9 +115,9 @@ library LibChainlinkPriceFeed {
    * @return price The price in the given decimal.
    */
   function quotePrice(ChainlinkPriceFeed memory priceFeed) internal view returns (uint256 price) {
-    (, int256 answer,, uint256 updatedAt,) = priceFeed.aggregator.latestRoundData();
-    if (updatedAt < block.timestamp - priceFeed.maxAcceptableAge) {
-      revert ExceededMaxAcceptableAge(updatedAt, block.timestamp - priceFeed.maxAcceptableAge);
+    (, int256 answer,, uint256 updatedAt,) = priceFeed._aggregator.latestRoundData();
+    if (updatedAt < block.timestamp - priceFeed._maxAcceptableAge) {
+      revert ExceededMaxAcceptableAge(updatedAt, block.timestamp - priceFeed._maxAcceptableAge);
     }
 
     return uint256(answer);

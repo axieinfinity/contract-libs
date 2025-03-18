@@ -3,7 +3,7 @@ name = "chainlink"
 version = "2.21.0"
 url = "https://github.com/smartcontractkit/chainlink/archive/refs/tags/v2.21.0.zip"
 checksum = "436fb27dba983312c9af978374f056d5e83033f951d9236235ed799267cd0a02"
-integrity = "a96ab445a5756b7ba30b993804409d49c37f0145d50417875c04aafff2833aad"
+integrity = "52944737dd1c3d6f05390541ecffdea3c3802fc0712916e40cf4bd314574303a"
 
 [[dependencies]]
 name = "forge-std"
@@ -17,7 +17,7 @@ name = "openzeppelin"
 version = "4.9.6"
 url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip"
 checksum = "7af0307b0ad8560aa09405da10bd705fd189b544597695b2c3046b15ce637e47"
-integrity = "0c15334521639077e01a73f21dbbfa1ce5ae6061a9e6c591ce93607abbffbc38"
+integrity = "559f038c60d5352d61332f7b4e81d4e021b3d4b6688fd384d12a23aaf2649395"
 
 [[dependencies]]
 name = "pyth"
@@ -25,10 +25,3 @@ version = "2.2.0"
 url = "https://github.com/pyth-network/pyth-sdk-solidity/archive/refs/tags/v2.2.0.zip"
 checksum = "71431ac3fe4e61ce2b8abd649d3e741277ca4dba287c2a4291d040190b8fb8da"
 integrity = "845f9e662935eb347e9189da9b156f0062bcab1d372c7397777dbda609776a5c"
-
-[[dependencies]]
-name = "solady"
-version = "0.1.12"
-url = "https://github.com/Vectorized/solady/archive/refs/tags/v0.1.12.zip"
-checksum = "6646be228dc0d95cbcd4b937f0a805a2e1e13c60e9bb7ed927eaa18baf8d06a2"
-integrity = "c2d5cc3d6374e52ea0aa3a7a4a82871084cdb9df12c89787fe0e777177e5f52d"

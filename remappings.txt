@@ -1,2 +1,0 @@
-pyth-2.2.0/=dependencies/pyth-2.2.0/
-solady-0.1.12/=dependencies/solady-0.1.12/

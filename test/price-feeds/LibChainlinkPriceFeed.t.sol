@@ -174,11 +174,11 @@ contract LibChainlinkPriceFeedTest is Test {
 
   function testConcrete_ConvertRON2USD() public {
     ChainlinkPriceFeed memory converter = ChainlinkPriceFeed({
-      aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
-      pairDecimal: 8,
-      tokenInDecimal: 18,
-      tokenOutDecimal: 18,
-      maxAcceptableAge: 1 days
+      _aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
+      _pairDecimal: 8,
+      _tokenInDecimal: 18,
+      _tokenOutDecimal: 18,
+      _maxAcceptableAge: 1 days
     });
 
     uint256 ronAmount = 50e18;
@@ -189,11 +189,11 @@ contract LibChainlinkPriceFeedTest is Test {
 
   function testConcrete_ConvertUSD2RON() public {
     ChainlinkPriceFeed memory converter = ChainlinkPriceFeed({
-      aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
-      pairDecimal: 8,
-      tokenInDecimal: 18,
-      tokenOutDecimal: 18,
-      maxAcceptableAge: 1 days
+      _aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
+      _pairDecimal: 8,
+      _tokenInDecimal: 18,
+      _tokenOutDecimal: 18,
+      _maxAcceptableAge: 1 days
     });
 
     uint256 usdAmount = 100e18;

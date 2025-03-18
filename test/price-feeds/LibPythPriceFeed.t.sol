@@ -50,6 +50,7 @@ contract LibPythPriceFeedTest is Test {
 
   function testFuzz_Convert_RONWeiToUSDWei(uint256 inpWei, uint8 outDecimals)
     public
+    view
     safeWei(inpWei)
     safeDecimals(outDecimals)
     returns (uint256 calc)
@@ -61,7 +62,7 @@ contract LibPythPriceFeedTest is Test {
     assertEq(calc, expt);
   }
 
-  function testConcrete_Convert_RONWeiToUSDWei() public {
+  function testConcrete_Convert_RONWeiToUSDWei() public view {
     assertEq(testFuzz_Convert_RONWeiToUSDWei(1e18, 8), 206943385);
     assertEq(testFuzz_Convert_RONWeiToUSDWei(2e18, 9), 4138867702);
     assertEq(testFuzz_Convert_RONWeiToUSDWei(4e18, 10), 82777354060);
@@ -69,6 +70,7 @@ contract LibPythPriceFeedTest is Test {
 
   function testFuzz_Convert_USDWeiToRONWei(uint256 inpWei, uint8 usdDecimals)
     public
+    view
     safeDecimals(usdDecimals)
     safeWei(inpWei)
     returns (uint256 calc)
@@ -83,6 +85,7 @@ contract LibPythPriceFeedTest is Test {
 
   function testFuzz_Convert_USDAmountToRONWei(uint256 usd, uint8 usdDecimals)
     public
+    view
     safeDecimals(usdDecimals)
     safeTokenAmount(usd, usdDecimals)
     returns (uint256 calc)
@@ -90,7 +93,7 @@ contract LibPythPriceFeedTest is Test {
     return testFuzz_Convert_USDWeiToRONWei(usd * 10 ** usdDecimals, usdDecimals);
   }
 
-  function testFuzz_Convert_USDAmountToRONWei(uint8 decimals) public safeDecimals(decimals) {
+  function testFuzz_Convert_USDAmountToRONWei(uint8 decimals) public view safeDecimals(decimals) {
     assertEq(testFuzz_Convert_USDAmountToRONWei(1, decimals), 483223950000000000);
     assertEq(testFuzz_Convert_USDAmountToRONWei(2, decimals), 966447900000000000);
     assertEq(testFuzz_Convert_USDAmountToRONWei(4, decimals), 1932895800000000000);
@@ -99,7 +102,7 @@ contract LibPythPriceFeedTest is Test {
     assertEq(testFuzz_Convert_USDAmountToRONWei(32, decimals), 15463166400000000000);
   }
 
-  function testConcrete_Convert_USDWeiToRONWei() public {
+  function testConcrete_Convert_USDWeiToRONWei() public view {
     assertEq(testFuzz_Convert_USDWeiToRONWei(100000000, 8), 483223950000000000);
     assertEq(testFuzz_Convert_USDWeiToRONWei(200000000, 8), 966447900000000000);
     assertEq(testFuzz_Convert_USDWeiToRONWei(400000000, 8), 1932895800000000000);
@@ -115,7 +118,7 @@ contract LibPythPriceFeedTest is Test {
     assertEq(testFuzz_Convert_USDWeiToRONWei(32000000000000000000, 18), 15463166400000000000);
   }
 
-  function testFuzz_Inverse(uint8 idIdx, uint8 inverseTimes) public {
+  function testFuzz_Inverse(uint8 idIdx, uint8 inverseTimes) public view {
     vm.assume(inverseTimes > 0);
     uint256 inpIdx = idIdx % _pythIds.length;
     uint256 outIdx = (uint256(idIdx) + inverseTimes) % _pythIds.length;
@@ -128,7 +131,7 @@ contract LibPythPriceFeedTest is Test {
     assertEq(pythOutput.price, getPrice(_pythIds[outIdx]).price);
   }
 
-  function testConcrete_Inverse() public {
+  function testConcrete_Inverse() public pure {
     assertEq(getPrice(RONUSD_ID).price, getPrice(USDRON_ID).inverse({ expo: -8 }).price);
     assertEq(getPrice(USDRON_ID).price, getPrice(RONUSD_ID).inverse({ expo: -8 }).price);
   }
