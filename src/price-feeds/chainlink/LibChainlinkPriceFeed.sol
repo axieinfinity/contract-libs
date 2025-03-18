@@ -23,6 +23,7 @@ library LibChainlinkPriceFeed {
   /// @dev This is used to prevent overflow when scaling the price.
   uint8 internal constant _MAX_DECIMALS = 30;
 
+  /// @dev Thrown when the decimal is larger than the maximum decimal.
   error LargeDecimal(uint8 decimal);
   /// @dev Thrown when the price update timestamp is older than the max acceptable age.
   error ExceededMaxAcceptableAge(uint256 latestTimestamp, uint256 maxAcceptableTimestamp);
