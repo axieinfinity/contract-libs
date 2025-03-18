@@ -11,6 +11,7 @@ struct ChainlinkPriceFeed {
   int32 pairDecimal;
   int32 tokenInDecimal;
   int32 tokenOutDecimal;
+  uint256 maxAcceptableAge;
 }
 
 using LibChainlinkPriceFeed for ChainlinkPriceFeed global;
@@ -19,23 +20,34 @@ library LibChainlinkPriceFeed {
   error QuotingPriceFailed();
   error ExponentTooLarge(int32 expo);
   error PositiveExponent(int32 expo);
+  error ExceededMaxAcceptableAge(uint256 latestTimestamp, uint256 maxAcceptableTimestamp);
 
   event ChainlinkPriceFeedUpdated(
-    AggregatorV2V3Interface indexed aggregator, int32 tokenInDecimal, int32 tokenOutDecimal, string description
+    AggregatorV2V3Interface indexed aggregator,
+    int32 tokenInDecimal,
+    int32 tokenOutDecimal,
+    uint256 maxAcceptableAge,
+    string description
   );
 
-  function set(ChainlinkPriceFeed storage $priceFeed, address aggregator, int32 tokenInDecimal, int32 tokenOutDecimal)
-    internal
-  {
+  function set(
+    ChainlinkPriceFeed storage $priceFeed,
+    address aggregator,
+    int32 tokenInDecimal,
+    int32 tokenOutDecimal,
+    uint256 maxAcceptableAge
+  ) internal {
     $priceFeed.aggregator = AggregatorV2V3Interface(aggregator);
     $priceFeed.tokenInDecimal = tokenInDecimal;
     $priceFeed.tokenOutDecimal = tokenOutDecimal;
     $priceFeed.pairDecimal = int32(uint32(AggregatorV2V3Interface(aggregator).decimals()));
+    $priceFeed.maxAcceptableAge = maxAcceptableAge;
 
     emit ChainlinkPriceFeedUpdated(
       AggregatorV2V3Interface(aggregator),
       tokenInDecimal,
       tokenOutDecimal,
+      maxAcceptableAge,
       AggregatorV2V3Interface(aggregator).description()
     );
   }
@@ -70,9 +82,16 @@ library LibChainlinkPriceFeed {
   function quotePrice(ChainlinkPriceFeed memory priceFeed) internal view returns (uint256 price) {
     try priceFeed.aggregator.latestAnswer() returns (int256 answer) {
       price = uint256(answer);
+      uint256 latestTimestamp = priceFeed.aggregator.latestTimestamp();
+      if (latestTimestamp < block.timestamp - priceFeed.maxAcceptableAge) {
+        revert ExceededMaxAcceptableAge(latestTimestamp, block.timestamp - priceFeed.maxAcceptableAge);
+      }
     } catch {
-      try priceFeed.aggregator.latestRoundData() returns (uint80, int256 answer, uint256, uint256, uint80) {
+      try priceFeed.aggregator.latestRoundData() returns (uint80, int256 answer, uint256, uint256 updatedAt, uint80) {
         price = uint256(answer);
+        if (updatedAt < block.timestamp - priceFeed.maxAcceptableAge) {
+          revert ExceededMaxAcceptableAge(updatedAt, block.timestamp - priceFeed.maxAcceptableAge);
+        }
       } catch {
         revert QuotingPriceFailed();
       }

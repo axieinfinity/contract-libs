@@ -14,6 +14,10 @@ import { SafeMath } from "../../dependencies/openzeppelin-4.9.6/contracts/utils/
 import { SafeCast } from "../../dependencies/openzeppelin-4.9.6/contracts/utils/math/SafeCast.sol";
 
 contract MockRONPriceFeed {
+  function latestTimestamp() public pure returns (uint256) {
+    return 1742296233;
+  }
+
   function latestAnswer() public pure returns (int256) {
     return 77694561;
   }
@@ -47,7 +51,7 @@ contract ChainlinkPriceRONQuoterSample {
   ChainlinkPriceFeed public ronPriceFeed;
 
   function set(address aggregator, int32 tokenInDecimal, int32 tokenOutDecimal) external {
-    ronPriceFeed.set(aggregator, tokenInDecimal, tokenOutDecimal);
+    ronPriceFeed.set(aggregator, tokenInDecimal, tokenOutDecimal, 1 days);
   }
 
   function convertTokenIn2TokenOut(uint256 tokenInWei) external view returns (uint256 tokenOutWei) {
@@ -65,13 +69,13 @@ contract LibChainlinkPriceFeedTest is Test {
   using SafeCast for *;
   using SafeMath for *;
 
-  uint8 _maxDecimal;
-  uint256 _mainnetForkId;
-  uint256 _testnetForkId;
+  uint8 internal _maxDecimal;
+  uint256 internal _mainnetForkId;
+  uint256 internal _testnetForkId;
 
-  mapping(uint256 chainId => bytes32 pythId) _pythPriceId;
-  mapping(uint256 chainId => address pyth) _pythAggregator;
-  mapping(uint256 chainid => address cl) _chainlinkAggregator;
+  mapping(uint256 chainId => bytes32 pythId) internal _pythPriceId;
+  mapping(uint256 chainId => address pyth) internal _pythAggregator;
+  mapping(uint256 chainid => address cl) internal _chainlinkAggregator;
 
   modifier safeDecimal(uint8 decimal) {
     vm.assume(decimal < _maxDecimal);
@@ -87,6 +91,8 @@ contract LibChainlinkPriceFeedTest is Test {
 
   function setUp() public {
     _maxDecimal = type(uint256).max.log10().toUint8();
+    vm.warp(1742296320);
+
     console.log("Max decimal: %d", _maxDecimal);
 
     _mainnetForkId = vm.createFork("ronin-mainnet", 43480534);
@@ -171,7 +177,8 @@ contract LibChainlinkPriceFeedTest is Test {
       aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
       pairDecimal: 8,
       tokenInDecimal: 18,
-      tokenOutDecimal: 18
+      tokenOutDecimal: 18,
+      maxAcceptableAge: 1 days
     });
 
     uint256 ronAmount = 50e18;
@@ -185,7 +192,8 @@ contract LibChainlinkPriceFeedTest is Test {
       aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
       pairDecimal: 8,
       tokenInDecimal: 18,
-      tokenOutDecimal: 18
+      tokenOutDecimal: 18,
+      maxAcceptableAge: 1 days
     });
 
     uint256 usdAmount = 100e18;
