@@ -27,6 +27,8 @@ library LibChainlinkPriceFeed {
   error LargeDecimal(uint8 decimal);
   /// @dev Thrown when the price update timestamp is older than the max acceptable age.
   error ExceededMaxAcceptableAge(uint256 latestTimestamp, uint256 maxAcceptableTimestamp);
+  /// @dev Thrown when the price is negative.
+  error PanicQuotePrice(int256 answer);
 
   /// @dev Emitted when the price feed is updated.
   event ChainlinkPriceFeedUpdated(
@@ -119,6 +121,7 @@ library LibChainlinkPriceFeed {
     if (updatedAt < block.timestamp - priceFeed._maxAcceptableAge) {
       revert ExceededMaxAcceptableAge(updatedAt, block.timestamp - priceFeed._maxAcceptableAge);
     }
+    if (answer <= 0) revert PanicQuotePrice(answer);
 
     return uint256(answer);
   }
