@@ -20,7 +20,7 @@ bracket_spacing = true
 [rpc_endpoints]
 localhost = "http://localhost:8545"
 ethereum = "https://eth.llamarpc.com"
-ronin-mainnet = "https://api.roninchain.com/rpc"
+ronin-mainnet = "https://api-archived.roninchain.com/rpc"
 goerli = "https://ethereum-goerli.publicnode.com"
 ronin-testnet = "https://saigon-archive.roninchain.com/rpc"
 
@@ -32,4 +32,7 @@ runs = 256
 
 [dependencies]
 forge-std = { version = "1.8.2" }
-"@openzeppelin-contracts" = { version = "4.9.6" }
+chainlink = { version = "2.21.0", url = "https://github.com/smartcontractkit/chainlink/archive/refs/tags/v2.21.0.zip" }
+openzeppelin = { version = "4.9.6", url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip" }
+pyth = { version = "2.2.0", url = "https://github.com/pyth-network/pyth-sdk-solidity/archive/refs/tags/v2.2.0.zip" }
+solady = { version = "0.1.12", url = "https://github.com/Vectorized/solady/archive/refs/tags/v0.1.12.zip" }
