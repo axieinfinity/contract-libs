@@ -127,9 +127,13 @@ library LibChainlinkPriceFeed {
    * @param price The price in the given decimal.
    * @param priceDecimal The decimal of the price.
    * @param scaleDecimal The decimal to scale the price to.
-   * @return The scaled price in the given decimal.
+   * @return scaledPrice The scaled price in the given decimal.
    */
-  function scalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal) internal pure returns (uint256) {
+  function scalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal)
+    internal
+    pure
+    returns (uint256 scaledPrice)
+  {
     return price.exp10(int8(scaleDecimal) - int8(priceDecimal));
   }
 
@@ -138,9 +142,13 @@ library LibChainlinkPriceFeed {
    * @param price The price of (A/B) in the given decimal.
    * @param priceDecimal The decimal of the price.
    * @param scaleDecimal The decimal to scale the price to.
-   * @return The price of (B/A) in the given decimal.
+   * @return inversedPrice The price of (B/A) scaled in the given decimal.
    */
-  function inverseAndScalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal) internal pure returns (uint256) {
+  function inverseAndScalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal)
+    internal
+    pure
+    returns (uint256 inversedPrice)
+  {
     return Math.mulDiv(10 ** priceDecimal, 10 ** scaleDecimal, price);
   }
 }
