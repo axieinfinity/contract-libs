@@ -8,39 +8,56 @@ import { LibPowMath } from "../../math/LibPowMath.sol";
 
 struct ChainlinkPriceFeed {
   AggregatorV2V3Interface aggregator;
-  int32 pairDecimal;
-  int32 tokenInDecimal;
-  int32 tokenOutDecimal;
-  uint256 maxAcceptableAge;
+  uint8 pairDecimal;
+  uint8 tokenInDecimal;
+  uint8 tokenOutDecimal;
+  uint64 maxAcceptableAge;
 }
 
 using LibChainlinkPriceFeed for ChainlinkPriceFeed global;
 
 library LibChainlinkPriceFeed {
-  error QuotingPriceFailed();
-  error ExponentTooLarge(int32 expo);
-  error PositiveExponent(int32 expo);
+  using LibPowMath for uint256;
+
+  /// @dev The maximum decimal for the token.
+  /// @dev This is used to prevent overflow when scaling the price.
+  uint8 internal constant _MAX_DECIMALS = 30;
+
+  error LargeDecimal(uint8 decimal);
+  /// @dev Thrown when the price update timestamp is older than the max acceptable age.
   error ExceededMaxAcceptableAge(uint256 latestTimestamp, uint256 maxAcceptableTimestamp);
 
+  /// @dev Emitted when the price feed is updated.
   event ChainlinkPriceFeedUpdated(
     AggregatorV2V3Interface indexed aggregator,
-    int32 tokenInDecimal,
-    int32 tokenOutDecimal,
-    uint256 maxAcceptableAge,
+    uint8 tokenInDecimal,
+    uint8 tokenOutDecimal,
+    uint64 maxAcceptableAge,
     string description
   );
 
+  /**
+   * @dev Sets the price feed for a token.
+   * @param $priceFeed The Chainlink price feed storage variable.
+   * @param aggregator The address of the Chainlink aggregator.
+   * @param tokenInDecimal The decimal of token in.
+   * @param tokenOutDecimal The decimal of token out.
+   * @param maxAcceptableAge The max acceptable age for the price.
+   */
   function set(
     ChainlinkPriceFeed storage $priceFeed,
     address aggregator,
-    int32 tokenInDecimal,
-    int32 tokenOutDecimal,
-    uint256 maxAcceptableAge
+    uint8 tokenInDecimal,
+    uint8 tokenOutDecimal,
+    uint64 maxAcceptableAge
   ) internal {
+    if (tokenInDecimal > _MAX_DECIMALS) revert LargeDecimal(tokenInDecimal);
+    if (tokenOutDecimal > _MAX_DECIMALS) revert LargeDecimal(tokenOutDecimal);
+
     $priceFeed.aggregator = AggregatorV2V3Interface(aggregator);
     $priceFeed.tokenInDecimal = tokenInDecimal;
     $priceFeed.tokenOutDecimal = tokenOutDecimal;
-    $priceFeed.pairDecimal = int32(uint32(AggregatorV2V3Interface(aggregator).decimals()));
+    $priceFeed.pairDecimal = AggregatorV2V3Interface(aggregator).decimals();
     $priceFeed.maxAcceptableAge = maxAcceptableAge;
 
     emit ChainlinkPriceFeedUpdated(
@@ -52,67 +69,78 @@ library LibChainlinkPriceFeed {
     );
   }
 
-  function convertTokenIn2TokenOut(ChainlinkPriceFeed memory priceFeed, uint256 tokenInWei)
+  /**
+   * @dev Convert tokenIn amount to tokenOut amount.
+   * @param priceFeed The Chainlink price feed struct.
+   * @param tokenInAmount The amount of tokenIn.
+   * @return tokenOutAmount The amount of tokenOut.
+   */
+  function convertTokenIn2TokenOut(ChainlinkPriceFeed memory priceFeed, uint256 tokenInAmount)
     internal
     view
-    returns (uint256 tokenOutWei)
+    returns (uint256 tokenOutAmount)
   {
     uint256 price = quotePrice(priceFeed);
 
     // Scale the price to the same decimal as tokenOut
     uint256 scaledPrice = scalePrice(price, priceFeed.pairDecimal, priceFeed.tokenOutDecimal);
 
-    tokenOutWei = Math.mulDiv(scaledPrice, tokenInWei, LibPowMath.exp10(1, int32(uint32(priceFeed.tokenInDecimal))));
+    tokenOutAmount = Math.mulDiv(scaledPrice, tokenInAmount, 10 ** priceFeed.tokenInDecimal);
   }
 
-  function convertTokenOut2TokenIn(ChainlinkPriceFeed memory priceFeed, uint256 tokenOutWei)
+  /**
+   * @dev Converts the token out into token in.
+   * @param priceFeed The Chainlink price feed struct.
+   * @param tokenOutAmount The amount of token out amount.
+   * @return tokenInAmount The amount of token in amount.
+   */
+  function convertTokenOut2TokenIn(ChainlinkPriceFeed memory priceFeed, uint256 tokenOutAmount)
     internal
     view
-    returns (uint256 tokenInWei)
+    returns (uint256 tokenInAmount)
   {
     uint256 price = quotePrice(priceFeed);
 
     // Scale the price to the same decimal as tokenIn
-    // The price is in tokenOut, so we need to inverse it to get the tokenIn price
-    uint256 inversedPrice = inverse(int256(price), -priceFeed.pairDecimal, -priceFeed.tokenInDecimal);
+    // The price is in tokenOut, so we need to inverseAndScalePrice it to get the tokenIn price
+    uint256 inversedPrice = inverseAndScalePrice(price, priceFeed.pairDecimal, priceFeed.tokenInDecimal);
 
-    tokenInWei = Math.mulDiv(inversedPrice, tokenOutWei, LibPowMath.exp10(1, priceFeed.tokenOutDecimal));
+    tokenInAmount = Math.mulDiv(inversedPrice, tokenOutAmount, 10 ** priceFeed.tokenOutDecimal);
   }
 
+  /**
+   * @dev Get the price from the Chainlink price feed.
+   * @param priceFeed The Chainlink price feed.
+   * @return price The price in the given decimal.
+   */
   function quotePrice(ChainlinkPriceFeed memory priceFeed) internal view returns (uint256 price) {
-    try priceFeed.aggregator.latestAnswer() returns (int256 answer) {
-      price = uint256(answer);
-      uint256 latestTimestamp = priceFeed.aggregator.latestTimestamp();
-      if (latestTimestamp < block.timestamp - priceFeed.maxAcceptableAge) {
-        revert ExceededMaxAcceptableAge(latestTimestamp, block.timestamp - priceFeed.maxAcceptableAge);
-      }
-    } catch {
-      try priceFeed.aggregator.latestRoundData() returns (uint80, int256 answer, uint256, uint256 updatedAt, uint80) {
-        price = uint256(answer);
-        if (updatedAt < block.timestamp - priceFeed.maxAcceptableAge) {
-          revert ExceededMaxAcceptableAge(updatedAt, block.timestamp - priceFeed.maxAcceptableAge);
-        }
-      } catch {
-        revert QuotingPriceFailed();
-      }
+    (, int256 answer,, uint256 updatedAt,) = priceFeed.aggregator.latestRoundData();
+    if (updatedAt < block.timestamp - priceFeed.maxAcceptableAge) {
+      revert ExceededMaxAcceptableAge(updatedAt, block.timestamp - priceFeed.maxAcceptableAge);
     }
+
+    return uint256(answer);
   }
 
-  function scalePrice(uint256 price, int32 pairDecimal, int32 scaledDecimal) internal pure returns (uint256) {
-    return LibPowMath.exp10(price, scaledDecimal - pairDecimal);
+  /**
+   * @dev Scale the price to the given decimal.
+   * @param price The price in the given decimal.
+   * @param priceDecimal The decimal of the price.
+   * @param scaleDecimal The decimal to scale the price to.
+   * @return The scaled price in the given decimal.
+   */
+  function scalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal) internal pure returns (uint256) {
+    return price.exp10(int8(scaleDecimal) - int8(priceDecimal));
   }
 
-  function inverse(int256 price, int32 priceExpo, int32 expo) internal pure returns (uint256) {
-    if (priceExpo > 0) revert PositiveExponent(expo);
-
-    uint256 exp10p1 = LibPowMath.exp10(1, -priceExpo);
-    if (exp10p1 > uint256(type(int256).max)) revert ExponentTooLarge(priceExpo);
-
-    uint256 exp10p2 = LibPowMath.exp10(1, -expo);
-    if (exp10p2 > uint256(type(int256).max)) revert ExponentTooLarge(expo);
-
-    int256 inversedPrice = (int256(exp10p1) * int256(exp10p2)) / price;
-
-    return uint256(inversedPrice);
+  /**
+   * @dev Inverse the price of (A/B) to (B/A) and scale it to the given decimal.
+   * @param price The price of (A/B) in the given decimal.
+   * @param priceDecimal The decimal of the price.
+   * @param scaleDecimal The decimal to scale the price to.
+   * @return The price of (B/A) in the given decimal.
+   */
+  function inverseAndScalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal) internal pure returns (uint256) {
+    return Math.mulDiv(10 ** priceDecimal, 10 ** scaleDecimal, price);
   }
 }

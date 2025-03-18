@@ -50,7 +50,7 @@ contract PythPriceRONQuoterSample {
 contract ChainlinkPriceRONQuoterSample {
   ChainlinkPriceFeed public ronPriceFeed;
 
-  function set(address aggregator, int32 tokenInDecimal, int32 tokenOutDecimal) external {
+  function set(address aggregator, uint8 tokenInDecimal, uint8 tokenOutDecimal) external {
     ronPriceFeed.set(aggregator, tokenInDecimal, tokenOutDecimal, 1 days);
   }
 
@@ -210,16 +210,16 @@ contract LibChainlinkPriceFeedTest is Test {
     safePrecision(uint256(price), decimal)
     safePrecision(uint256(price), priceDecimal)
   {
-    vm.assume(priceDecimal < 19);
-    vm.assume(decimal < 19);
+    vm.assume(priceDecimal < 30);
+    vm.assume(decimal < 30);
     vm.assume(price > 0);
 
-    uint256 got = LibChainlinkPriceFeed.inverse(int256(price), -int32(uint32(priceDecimal)), -int32(uint32(decimal)));
+    uint256 got = LibChainlinkPriceFeed.inverseAndScalePrice(price, priceDecimal, decimal);
 
     // Python script to calculate the expected value
     // print('res:', int(1e{priceDecimal}/{price} * 10**{decimal}))
     string[] memory cmd = new string[](3);
-    cmd[0] = "python";
+    cmd[0] = "python3";
     cmd[1] = "-c";
     cmd[2] = string.concat(
       "print('res:',",
@@ -244,29 +244,29 @@ contract LibChainlinkPriceFeedTest is Test {
 
   function testConcrete_Inverse() public pure {
     // Case 0: priceExpo == expo
-    int256 price = 1e8;
-    int32 expo = -8;
-    uint256 weiPrice = LibChainlinkPriceFeed.inverse(price, expo, expo);
+    uint256 price = 1e8;
+    uint8 decimal = 8;
+    uint256 weiPrice = LibChainlinkPriceFeed.inverseAndScalePrice(price, decimal, decimal);
     assertEq(weiPrice, 100000000, "Incorrect inverse price");
 
-    // Case 1: priceExpo > expo
+    // Case 1: priceExpo > decimal
     // WBTC/USD price
     price = 334172000;
-    expo = -8;
-    uint256 weiPrice2 = LibChainlinkPriceFeed.inverse(price, expo, -18);
+    decimal = 8;
+    uint256 weiPrice2 = LibChainlinkPriceFeed.inverseAndScalePrice(price, decimal, 18);
     assertEq(weiPrice2, 299247094310714242, "Incorrect inverse price");
     assertApproxEqAbs(
-      LibChainlinkPriceFeed.inverse(int256(weiPrice2), -18, expo), uint256(price), 100, "Incorrect inverse price"
+      LibChainlinkPriceFeed.inverseAndScalePrice(weiPrice2, 18, decimal), price, 100, "Incorrect inverse price"
     );
 
-    // Case 2: priceExpo < expo
+    // Case 2: priceExpo < decimal
     // USDC/USD price
     price = 99992523;
-    expo = -8;
-    uint256 weiPrice3 = LibChainlinkPriceFeed.inverse(price, expo, -6);
+    decimal = 8;
+    uint256 weiPrice3 = LibChainlinkPriceFeed.inverseAndScalePrice(price, decimal, 6);
     assertEq(weiPrice3, 1000074, "Incorrect inverse price");
     assertApproxEqAbs(
-      LibChainlinkPriceFeed.inverse(int256(weiPrice3), -6, expo), uint256(price), 100, "Incorrect inverse price"
+      LibChainlinkPriceFeed.inverseAndScalePrice(weiPrice3, 6, decimal), price, 100, "Incorrect inverse price"
     );
   }
 
@@ -276,18 +276,18 @@ contract LibChainlinkPriceFeedTest is Test {
     uint8 priceDecimal = 8;
 
     // Case 1: priceDecimal == decimal
-    assertEq(price, LibChainlinkPriceFeed.scalePrice(price, int32(uint32(priceDecimal)), 8), "Incorrect price scaling");
+    assertEq(price, LibChainlinkPriceFeed.scalePrice(price, priceDecimal, 8), "Incorrect price scaling");
 
     // Case 2: priceDecimal < decimal
-    uint256 weiPrice = LibChainlinkPriceFeed.scalePrice(price, int32(uint32(priceDecimal)), 18);
+    uint256 weiPrice = LibChainlinkPriceFeed.scalePrice(price, priceDecimal, 18);
     assertEq(weiPrice, 3341720000000000000, "Incorrect price scaling");
 
     // Case 3: priceDecimal > decimal
-    uint256 weiPrice2 = LibChainlinkPriceFeed.scalePrice(price, int32(uint32(priceDecimal)), 6);
+    uint256 weiPrice2 = LibChainlinkPriceFeed.scalePrice(price, priceDecimal, 6);
     assertEq(weiPrice2, 3341720, "Incorrect price scaling");
 
     // Case 4: reverse scaling
-    uint256 oriPrice = LibChainlinkPriceFeed.scalePrice(weiPrice, 18, int32(uint32(priceDecimal)));
+    uint256 oriPrice = LibChainlinkPriceFeed.scalePrice(weiPrice, 18, priceDecimal);
     assertEq(oriPrice, price, "Incorrect price scaling");
 
     // RON/USD price
@@ -295,18 +295,18 @@ contract LibChainlinkPriceFeedTest is Test {
     priceDecimal = 8;
 
     // Case 1: priceDecimal == decimal
-    assertEq(price, LibChainlinkPriceFeed.scalePrice(price, int32(uint32(priceDecimal)), 8), "Incorrect price scaling");
+    assertEq(price, LibChainlinkPriceFeed.scalePrice(price, priceDecimal, 8), "Incorrect price scaling");
 
     // Case 2: priceDecimal < decimal
-    weiPrice = LibChainlinkPriceFeed.scalePrice(price, int32(uint32(priceDecimal)), 18);
+    weiPrice = LibChainlinkPriceFeed.scalePrice(price, priceDecimal, 18);
     assertEq(weiPrice, 776945610000000000, "Incorrect price scaling");
 
     // Case 3: priceDecimal > decimal
-    weiPrice2 = LibChainlinkPriceFeed.scalePrice(price, int32(uint32(priceDecimal)), 6);
+    weiPrice2 = LibChainlinkPriceFeed.scalePrice(price, priceDecimal, 6);
     assertEq(weiPrice2, 776945, "Incorrect price scaling");
 
     // Case 4: reverse scaling
-    oriPrice = LibChainlinkPriceFeed.scalePrice(weiPrice, 18, int32(uint32(priceDecimal)));
+    oriPrice = LibChainlinkPriceFeed.scalePrice(weiPrice, 18, priceDecimal);
   }
 
   function testFuzz_ScalePrice_Calculate_Correctly(uint256 price, uint8 priceDecimal, uint8 decimal)
@@ -317,7 +317,7 @@ contract LibChainlinkPriceFeedTest is Test {
     safePrecision(uint256(price), decimal)
     safePrecision(uint256(price), priceDecimal)
   {
-    uint256 got = LibChainlinkPriceFeed.scalePrice(price, int32(uint32(priceDecimal)), int32(uint32(decimal)));
+    uint256 got = LibChainlinkPriceFeed.scalePrice(price, priceDecimal, decimal);
     console.log("Got", got);
     uint256 expected = uint256(scalePrice(price, priceDecimal, decimal));
     console.log("Expected", expected);
@@ -332,13 +332,5 @@ contract LibChainlinkPriceFeedTest is Test {
       return _price / uint256(10 ** uint256(_priceDecimals - _decimals));
     }
     return _price;
-  }
-
-  function latestRoundData()
-    public
-    pure
-    returns (uint80 roundId, uint256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
-  {
-    return (18446744073709553440, 8311679190297, 1742261649, 1742261667, 18446744073709553440);
   }
 }

@@ -110,7 +110,7 @@ library LibPythPriceFeed {
    * @dev Inverses token price of tokenA/tokenB to tokenB/tokenA.
    */
   function inverse(PythStructs.Price memory self, int32 expo) internal pure returns (PythStructs.Price memory outPrice) {
-    if (self.expo > 0) revert ErrPositiveExponent(expo);
+    if (self.expo > 0) revert ErrPositiveExponent(self.expo);
 
     uint256 exp10p1 = LibPowMath.exp10(1, -self.expo);
     if (exp10p1 > uint256(type(int256).max)) revert ErrExponentTooLarge(self.expo);
