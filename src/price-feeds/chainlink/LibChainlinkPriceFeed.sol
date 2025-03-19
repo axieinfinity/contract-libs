@@ -147,41 +147,49 @@ library LibChainlinkPriceFeed {
    * @dev Scale the price to the given decimal.
    * @param price The price in the given decimal.
    * @param priceDecimal The decimal of the price.
-   * @param scaleDecimal The decimal to scale the price to.
+   * @param desiredDecimal The decimal to scale the price to.
    * @return scaledPrice The scaled price in the given decimal.
    */
-  function scalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal)
+  function scalePrice(uint256 price, uint8 priceDecimal, uint8 desiredDecimal)
     internal
     pure
     returns (uint256 scaledPrice)
   {
     uint256 log10Price = Math.log10(price);
-    if (scaleDecimal > priceDecimal && log10Price + (scaleDecimal - priceDecimal) > _MAX_DECIMAL) {
-      revert ComputedPriceTooLarge(price, -(int8(scaleDecimal) - int8(priceDecimal)));
+    if (desiredDecimal > priceDecimal && log10Price + (desiredDecimal - priceDecimal) > _MAX_DECIMAL) {
+      revert ComputedPriceTooLarge(price, -(int8(desiredDecimal) - int8(priceDecimal)));
     }
-    if (scaleDecimal < priceDecimal && log10Price < priceDecimal - scaleDecimal) {
-      revert ComputedPriceTooSmall(price, -(int8(priceDecimal) - int8(scaleDecimal)));
+    if (desiredDecimal < priceDecimal && log10Price < priceDecimal - desiredDecimal) {
+      revert ComputedPriceTooSmall(price, -(int8(priceDecimal) - int8(desiredDecimal)));
     }
 
-    return price.exp10(int8(scaleDecimal) - int8(priceDecimal));
+    return price.exp10(int8(desiredDecimal) - int8(priceDecimal));
   }
 
   /**
-   * @dev Inverse the price of (A/B) to (B/A) and scale it to the given decimal.
-   * @param price The price of (A/B) in the given decimal.
-   * @param priceDecimal The decimal of the price.
-   * @param scaleDecimal The decimal to scale the price to.
-   * @return inversedPrice The price of (B/A) scaled in the given decimal.
+   * @dev Computes the inverse price of an asset pair (B/A) from (A/B) and scales it to the desired decimal precision.
+   *
+   * Given the price of (A/B), denoted as `x`, with decimal precision `d`, and the desired decimal `d'`,
+   * the inverse price (B/A), denoted as `y`, is computed as:
+   *
+   *     y = (1 / x) * 10^d * 10^d'
+   *       = (10^d / x) * 10^d'
+   *       = 10^(d + d') / x
+   *
+   * @param price The price of (A/B) with `priceDecimal` precision.
+   * @param priceDecimal The number of decimal places in `price`.
+   * @param desiredDecimal The target number of decimal places for the inverse price.
+   * @return inversedPrice The computed price of (B/A) scaled to `desiredDecimal`.
    */
-  function inverseAndScalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal)
+  function inverseAndScalePrice(uint256 price, uint8 priceDecimal, uint8 desiredDecimal)
     internal
     pure
     returns (uint256 inversedPrice)
   {
-    if (Math.log10(price) > priceDecimal + scaleDecimal) {
-      revert ComputedPriceTooSmall(price, -(int8(scaleDecimal) - int8(priceDecimal)));
+    if (Math.log10(price) > priceDecimal + desiredDecimal) {
+      revert ComputedPriceTooSmall(price, -(int8(desiredDecimal) - int8(priceDecimal)));
     }
 
-    return 10 ** (scaleDecimal + priceDecimal) / price;
+    return 10 ** (desiredDecimal + priceDecimal) / price;
   }
 }
