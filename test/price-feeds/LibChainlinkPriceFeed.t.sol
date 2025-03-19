@@ -14,6 +14,10 @@ import { SafeMath } from "../../dependencies/openzeppelin-4.9.6/contracts/utils/
 import { SafeCast } from "../../dependencies/openzeppelin-4.9.6/contracts/utils/math/SafeCast.sol";
 
 contract MockRONPriceFeed {
+  function decimals() public pure returns (uint8) {
+    return 8;
+  }
+
   function latestTimestamp() public pure returns (uint256) {
     return 1742296233;
   }
@@ -198,7 +202,6 @@ contract LibChainlinkPriceFeedTest is Test {
   function testConcrete_ConvertRON2USD() public {
     ChainlinkPriceFeed memory converter = ChainlinkPriceFeed({
       _aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
-      _pairDecimal: 8,
       _tokenInDecimal: 18,
       _tokenOutDecimal: 18,
       _maxAcceptableAge: 1 days
@@ -213,7 +216,6 @@ contract LibChainlinkPriceFeedTest is Test {
   function testConcrete_ConvertUSD2RON() public {
     ChainlinkPriceFeed memory converter = ChainlinkPriceFeed({
       _aggregator: AggregatorV2V3Interface(address(new MockRONPriceFeed())),
-      _pairDecimal: 8,
       _tokenInDecimal: 18,
       _tokenOutDecimal: 18,
       _maxAcceptableAge: 1 days

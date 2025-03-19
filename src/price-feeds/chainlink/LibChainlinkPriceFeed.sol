@@ -8,7 +8,6 @@ import { LibPowMath } from "../../math/LibPowMath.sol";
 
 struct ChainlinkPriceFeed {
   AggregatorV2V3Interface _aggregator;
-  uint8 _pairDecimal;
   uint8 _tokenInDecimal;
   uint8 _tokenOutDecimal;
   uint64 _maxAcceptableAge;
@@ -37,7 +36,6 @@ library LibChainlinkPriceFeed {
   /// @dev Emitted when the price feed is updated.
   event ChainlinkPriceFeedUpdated(
     AggregatorV2V3Interface indexed aggregator,
-    uint8 pairDecimal,
     uint8 tokenInDecimal,
     uint8 tokenOutDecimal,
     string description
@@ -60,21 +58,16 @@ library LibChainlinkPriceFeed {
     uint8 tokenOutDecimal,
     uint64 maxAcceptableAge
   ) internal {
-    uint8 pairDecimal = AggregatorV2V3Interface(aggregator).decimals();
-
     if (tokenInDecimal > _DECIMAL_LIMIT) revert LargeDecimal(tokenInDecimal);
     if (tokenOutDecimal > _DECIMAL_LIMIT) revert LargeDecimal(tokenOutDecimal);
-    if (pairDecimal > _DECIMAL_LIMIT) revert LargeDecimal(pairDecimal);
 
     $._aggregator = AggregatorV2V3Interface(aggregator);
     $._tokenInDecimal = tokenInDecimal;
     $._tokenOutDecimal = tokenOutDecimal;
-    $._pairDecimal = pairDecimal;
     $._maxAcceptableAge = maxAcceptableAge;
 
     emit ChainlinkPriceFeedUpdated(
       AggregatorV2V3Interface(aggregator),
-      pairDecimal,
       tokenInDecimal,
       tokenOutDecimal,
       AggregatorV2V3Interface(aggregator).description()
@@ -105,10 +98,10 @@ library LibChainlinkPriceFeed {
     view
     returns (uint256 tokenOutAmount)
   {
-    uint256 price = quotePrice(priceFeed);
+    (uint256 price, uint8 priceDecimal) = quotePrice(priceFeed);
 
     // Scale the price to the same decimal as tokenOut
-    uint256 scaledPrice = scalePrice(price, priceFeed._pairDecimal, priceFeed._tokenOutDecimal);
+    uint256 scaledPrice = scalePrice(price, priceDecimal, priceFeed._tokenOutDecimal);
 
     tokenOutAmount = Math.mulDiv(scaledPrice, tokenInAmount, 10 ** priceFeed._tokenInDecimal);
   }
@@ -124,11 +117,11 @@ library LibChainlinkPriceFeed {
     view
     returns (uint256 tokenInAmount)
   {
-    uint256 price = quotePrice(priceFeed);
+    (uint256 price, uint8 priceDecimal) = quotePrice(priceFeed);
 
     // Scale the price to the same decimal as tokenIn
     // The price is in tokenOut, so we need to inverseAndScalePrice it to get the tokenIn price
-    uint256 inversedPrice = inverseAndScalePrice(price, priceFeed._pairDecimal, priceFeed._tokenInDecimal);
+    uint256 inversedPrice = inverseAndScalePrice(price, priceDecimal, priceFeed._tokenInDecimal);
 
     tokenInAmount = Math.mulDiv(inversedPrice, tokenOutAmount, 10 ** priceFeed._tokenOutDecimal);
   }
@@ -138,14 +131,17 @@ library LibChainlinkPriceFeed {
    * @param priceFeed The Chainlink price feed.
    * @return price The price in the given decimal.
    */
-  function quotePrice(ChainlinkPriceFeed memory priceFeed) internal view returns (uint256 price) {
+  function quotePrice(ChainlinkPriceFeed memory priceFeed) internal view returns (uint256 price, uint8 priceDecimal) {
     (, int256 answer,, uint256 updatedAt,) = priceFeed._aggregator.latestRoundData();
     if (updatedAt < block.timestamp - priceFeed._maxAcceptableAge) {
       revert PriceTooOld(updatedAt, block.timestamp - priceFeed._maxAcceptableAge);
     }
     if (answer <= 0) revert PanicNegativeQuotePrice(answer);
 
-    return uint256(answer);
+    priceDecimal = priceFeed._aggregator.decimals();
+    if (priceDecimal > _DECIMAL_LIMIT) revert LargeDecimal(priceDecimal);
+
+    return (uint256(answer), priceDecimal);
   }
 
   /**
