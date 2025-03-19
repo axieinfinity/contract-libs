@@ -21,23 +21,29 @@ library LibChainlinkPriceFeed {
 
   /// @dev The maximum decimal for the token.
   /// @dev This is used to prevent overflow when scaling the price.
-  uint8 internal constant _MAX_DECIMALS = 30;
+  uint8 internal constant _DECIMAL_LIMIT = 30;
+  /// @dev Value of log10(2**256 - 1)
+  uint8 internal constant _MAX_DECIMAL = 77;
 
-  /// @dev Thrown when the decimal is larger than the maximum decimal.
+  /// @dev Thrown when the decimal is larger than the limit decimal.
   error LargeDecimal(uint8 decimal);
   /// @dev Thrown when the price update timestamp is older than the max acceptable age.
-  error ExceededMaxAcceptableAge(uint256 latestTimestamp, uint256 maxAcceptableTimestamp);
+  error PriceTooOld(uint256 latestTimestamp, uint256 maxAcceptableTimestamp);
   /// @dev Thrown when the price is negative.
-  error PanicQuotePrice(int256 answer);
+  error PanicNegativeQuotePrice(int256 answer);
+  /// @dev Thrown when the computed price is too large.
+  error ComputedPriceTooLarge(uint256 price, uint8 priceDecimal, uint8 scaleDecimal);
 
   /// @dev Emitted when the price feed is updated.
   event ChainlinkPriceFeedUpdated(
     AggregatorV2V3Interface indexed aggregator,
+    uint8 pairDecimal,
     uint8 tokenInDecimal,
     uint8 tokenOutDecimal,
-    uint64 maxAcceptableAge,
     string description
   );
+  /// @dev Emitted when the max acceptable age is updated.
+  event MaxAcceptableAgeUpdated(AggregatorV2V3Interface indexed aggregator, uint64 maxAcceptableAge);
 
   /**
    * @dev Sets the price feed for a token.
@@ -54,22 +60,38 @@ library LibChainlinkPriceFeed {
     uint8 tokenOutDecimal,
     uint64 maxAcceptableAge
   ) internal {
-    if (tokenInDecimal > _MAX_DECIMALS) revert LargeDecimal(tokenInDecimal);
-    if (tokenOutDecimal > _MAX_DECIMALS) revert LargeDecimal(tokenOutDecimal);
+    uint8 pairDecimal = AggregatorV2V3Interface(aggregator).decimals();
+
+    if (tokenInDecimal > _DECIMAL_LIMIT) revert LargeDecimal(tokenInDecimal);
+    if (tokenOutDecimal > _DECIMAL_LIMIT) revert LargeDecimal(tokenOutDecimal);
+    if (pairDecimal > _DECIMAL_LIMIT) revert LargeDecimal(pairDecimal);
 
     $._aggregator = AggregatorV2V3Interface(aggregator);
     $._tokenInDecimal = tokenInDecimal;
     $._tokenOutDecimal = tokenOutDecimal;
-    $._pairDecimal = AggregatorV2V3Interface(aggregator).decimals();
+    $._pairDecimal = pairDecimal;
     $._maxAcceptableAge = maxAcceptableAge;
 
     emit ChainlinkPriceFeedUpdated(
       AggregatorV2V3Interface(aggregator),
+      pairDecimal,
       tokenInDecimal,
       tokenOutDecimal,
-      maxAcceptableAge,
       AggregatorV2V3Interface(aggregator).description()
     );
+
+    emit MaxAcceptableAgeUpdated(AggregatorV2V3Interface(aggregator), maxAcceptableAge);
+  }
+
+  /**
+   * @dev Sets the max acceptable age for the price.
+   * @param $ The Chainlink price feed storage variable.
+   * @param maxAcceptableAge The max acceptable age for the price.
+   */
+  function setMaxAcceptableAge(ChainlinkPriceFeed storage $, uint64 maxAcceptableAge) internal {
+    $._maxAcceptableAge = maxAcceptableAge;
+
+    emit MaxAcceptableAgeUpdated(AggregatorV2V3Interface($._aggregator), maxAcceptableAge);
   }
 
   /**
@@ -119,9 +141,9 @@ library LibChainlinkPriceFeed {
   function quotePrice(ChainlinkPriceFeed memory priceFeed) internal view returns (uint256 price) {
     (, int256 answer,, uint256 updatedAt,) = priceFeed._aggregator.latestRoundData();
     if (updatedAt < block.timestamp - priceFeed._maxAcceptableAge) {
-      revert ExceededMaxAcceptableAge(updatedAt, block.timestamp - priceFeed._maxAcceptableAge);
+      revert PriceTooOld(updatedAt, block.timestamp - priceFeed._maxAcceptableAge);
     }
-    if (answer <= 0) revert PanicQuotePrice(answer);
+    if (answer <= 0) revert PanicNegativeQuotePrice(answer);
 
     return uint256(answer);
   }
@@ -138,6 +160,9 @@ library LibChainlinkPriceFeed {
     pure
     returns (uint256 scaledPrice)
   {
+    uint256 abs = priceDecimal > scaleDecimal ? priceDecimal - scaleDecimal : scaleDecimal - priceDecimal;
+    if (Math.log10(price) + abs > _MAX_DECIMAL) revert ComputedPriceTooLarge(price, priceDecimal, scaleDecimal);
+
     return price.exp10(int8(scaleDecimal) - int8(priceDecimal));
   }
 

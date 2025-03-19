@@ -108,6 +108,29 @@ contract LibChainlinkPriceFeedTest is Test {
     _chainlinkAggregator[2021] = 0xBaA0AfA2f390349e0074bE787509a098e3044fc8;
   }
 
+  function testFuzz_inverseAndScalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal) external pure {
+    vm.assume(price != 0);
+    vm.assume(price <= uint256(type(int256).max));
+    vm.assume(priceDecimal <= 30);
+    vm.assume(scaleDecimal <= 30);
+
+    LibChainlinkPriceFeed.inverseAndScalePrice(price, priceDecimal, scaleDecimal);
+  }
+
+  function testFuzz_scalePrice(uint256 price, uint8 priceDecimal, uint8 scaleDecimal)
+    external
+    view
+    safePrecision(price, priceDecimal)
+    safePrecision(price, scaleDecimal)
+  {
+    vm.assume(price != 0);
+    vm.assume(price <= uint256(type(int256).max));
+    vm.assume(priceDecimal <= 30);
+    vm.assume(scaleDecimal <= 30);
+
+    LibChainlinkPriceFeed.scalePrice(price, priceDecimal, scaleDecimal);
+  }
+
   function testFork_Testnet_ConvertUSD2RON_Pyth_Vs_Chainlink() public {
     vm.selectFork(_testnetForkId);
 

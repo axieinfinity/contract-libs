@@ -19,6 +19,14 @@ abstract contract ChainlinkPriceFeedConsumer {
   }
 
   /**
+   * @dev Updates the Chainlink price feed max acceptable age for querying price.
+   */
+  function _updateMaxAcceptableAge(uint64 maxAcceptableAge) internal {
+    ChainlinkPriceFeed storage $ = _getPriceFeedStorage();
+    $.setMaxAcceptableAge(maxAcceptableAge);
+  }
+
+  /**
    * @dev Returns the Chainlink price feed read-only.
    */
   function _getPriceFeed() internal pure returns (ChainlinkPriceFeed memory priceFeed) {
