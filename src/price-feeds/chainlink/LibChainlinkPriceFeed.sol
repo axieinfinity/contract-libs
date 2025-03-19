@@ -31,14 +31,13 @@ library LibChainlinkPriceFeed {
   /// @dev Thrown when the price is negative.
   error PanicNegativeQuotePrice(int256 answer);
   /// @dev Thrown when the computed price is too large.
-  error ComputedPriceTooLarge(uint256 price, uint8 priceDecimal, uint8 scaleDecimal);
+  error ComputedPriceTooLarge(uint256 price, int8 expo);
+  /// @dev Thrown when the computed price is too small.
+  error ComputedPriceTooSmall(uint256 price, int8 expo);
 
   /// @dev Emitted when the price feed is updated.
   event ChainlinkPriceFeedUpdated(
-    AggregatorV2V3Interface indexed aggregator,
-    uint8 tokenInDecimal,
-    uint8 tokenOutDecimal,
-    string description
+    AggregatorV2V3Interface indexed aggregator, uint8 tokenInDecimal, uint8 tokenOutDecimal, string description
   );
   /// @dev Emitted when the max acceptable age is updated.
   event MaxAcceptableAgeUpdated(AggregatorV2V3Interface indexed aggregator, uint64 maxAcceptableAge);
@@ -156,8 +155,13 @@ library LibChainlinkPriceFeed {
     pure
     returns (uint256 scaledPrice)
   {
-    uint256 abs = priceDecimal > scaleDecimal ? priceDecimal - scaleDecimal : scaleDecimal - priceDecimal;
-    if (Math.log10(price) + abs > _MAX_DECIMAL) revert ComputedPriceTooLarge(price, priceDecimal, scaleDecimal);
+    uint256 log10Price = Math.log10(price);
+    if (scaleDecimal > priceDecimal && log10Price + (scaleDecimal - priceDecimal) > _MAX_DECIMAL) {
+      revert ComputedPriceTooLarge(price, -(int8(scaleDecimal) - int8(priceDecimal)));
+    }
+    if (scaleDecimal < priceDecimal && log10Price < priceDecimal - scaleDecimal) {
+      revert ComputedPriceTooSmall(price, -(int8(priceDecimal) - int8(scaleDecimal)));
+    }
 
     return price.exp10(int8(scaleDecimal) - int8(priceDecimal));
   }
@@ -174,6 +178,10 @@ library LibChainlinkPriceFeed {
     pure
     returns (uint256 inversedPrice)
   {
-    return Math.mulDiv(10 ** priceDecimal, 10 ** scaleDecimal, price);
+    if (Math.log10(price) > priceDecimal + scaleDecimal) {
+      revert ComputedPriceTooSmall(price, -(int8(scaleDecimal) - int8(priceDecimal)));
+    }
+
+    return 10 ** (scaleDecimal + priceDecimal) / price;
   }
 }

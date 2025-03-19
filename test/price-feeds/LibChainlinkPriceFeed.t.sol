@@ -82,15 +82,24 @@ contract LibChainlinkPriceFeedTest is Test {
   mapping(uint256 chainid => address cl) internal _chainlinkAggregator;
 
   modifier safeDecimal(uint8 decimal) {
-    vm.assume(decimal < _maxDecimal);
+    _safeDecimal(decimal);
     _;
   }
 
+  function _safeDecimal(uint8 decimal) internal view {
+    vm.assume(decimal < _maxDecimal);
+  }
+
   modifier safePrecision(uint256 price, uint8 decimal) {
-    vm.assume(Math.log10(price) + decimal < _maxDecimal);
+    _safePrecision(price, decimal);
+    _;
+  }
+
+  function _safePrecision(uint256 price, uint8 decimal) internal view {
+    uint256 log10Price = Math.log10(price);
+    vm.assume(log10Price + decimal < _maxDecimal);
     (bool ok,) = SafeMath.tryMul(price, 10 ** decimal);
     vm.assume(ok);
-    _;
   }
 
   function setUp() public {
@@ -117,6 +126,7 @@ contract LibChainlinkPriceFeedTest is Test {
     vm.assume(price <= uint256(type(int256).max));
     vm.assume(priceDecimal <= 30);
     vm.assume(scaleDecimal <= 30);
+    vm.assume(Math.log10(price) < priceDecimal + scaleDecimal);
 
     LibChainlinkPriceFeed.inverseAndScalePrice(price, priceDecimal, scaleDecimal);
   }
@@ -131,6 +141,7 @@ contract LibChainlinkPriceFeedTest is Test {
     vm.assume(price <= uint256(type(int256).max));
     vm.assume(priceDecimal <= 30);
     vm.assume(scaleDecimal <= 30);
+    if (priceDecimal > scaleDecimal) vm.assume(Math.log10(price) >= priceDecimal - scaleDecimal);
 
     LibChainlinkPriceFeed.scalePrice(price, priceDecimal, scaleDecimal);
   }
@@ -238,6 +249,7 @@ contract LibChainlinkPriceFeedTest is Test {
     vm.assume(priceDecimal < 30);
     vm.assume(decimal < 30);
     vm.assume(price > 0);
+    vm.assume(Math.log10(price) < priceDecimal + decimal);
 
     uint256 got = LibChainlinkPriceFeed.inverseAndScalePrice(price, priceDecimal, decimal);
 
@@ -342,10 +354,10 @@ contract LibChainlinkPriceFeedTest is Test {
     safePrecision(uint256(price), decimal)
     safePrecision(uint256(price), priceDecimal)
   {
+    if (priceDecimal > decimal) vm.assume(Math.log10(price) >= priceDecimal - decimal);
+
     uint256 got = LibChainlinkPriceFeed.scalePrice(price, priceDecimal, decimal);
-    console.log("Got", got);
     uint256 expected = uint256(scalePrice(price, priceDecimal, decimal));
-    console.log("Expected", expected);
 
     assertEq(got, expected, "Incorrect price scaling");
   }
