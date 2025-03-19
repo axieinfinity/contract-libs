@@ -18,8 +18,10 @@ using LibChainlinkPriceFeed for ChainlinkPriceFeed global;
 library LibChainlinkPriceFeed {
   using LibPowMath for uint256;
 
-  /// @dev The maximum decimal for the token.
-  /// @dev This is used to prevent overflow when scaling the price.
+  /**
+   * @dev This is used to prevent overflow when scaling the price.
+   * Reference: https://github.com/pancakeswap/pancake-smart-contracts/blob/cb079908a30328e46d42fe8cc77b9f7d38a15c2f/projects/farms-pools/contracts/SmartChef.sol#L94
+   */
   uint8 internal constant _DECIMAL_LIMIT = 30;
   /// @dev Value of log10(2**256 - 1)
   uint8 internal constant _MAX_DECIMAL = 77;
