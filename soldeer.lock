@@ -1,12 +1,27 @@
+[[dependencies]]
+name = "chainlink"
+version = "2.21.0"
+url = "https://github.com/smartcontractkit/chainlink/archive/refs/tags/v2.21.0.zip"
+checksum = "436fb27dba983312c9af978374f056d5e83033f951d9236235ed799267cd0a02"
+integrity = "52944737dd1c3d6f05390541ecffdea3c3802fc0712916e40cf4bd314574303a"
 
 [[dependencies]]
 name = "forge-std"
 version = "1.8.2"
-source = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_8_2_19-05-2024_18:52:07_forge-std-1.8.2.zip"
+url = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_8_2_19-05-2024_18:52:07_forge-std-1.8.2.zip"
 checksum = "88a37e1d79f60b8aad08c7bd50a7a5ef973fc172b1495028d0725a17f5a4976c"
+integrity = "7db36e30b7e5ff6bd2a38ee5d634d811ed98fd7c684785f937fea3ac3df37111"
 
 [[dependencies]]
-name = "@openzeppelin-contracts"
+name = "openzeppelin"
 version = "4.9.6"
-source = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts/4_9_6_14-03-2024_06:11:55_contracts.zip"
-checksum = "57f2cae4b45b91b0847e58c36ea70aee0fb3212cc09b47279627f0764f87e5ee"
+url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip"
+checksum = "7af0307b0ad8560aa09405da10bd705fd189b544597695b2c3046b15ce637e47"
+integrity = "559f038c60d5352d61332f7b4e81d4e021b3d4b6688fd384d12a23aaf2649395"
+
+[[dependencies]]
+name = "pyth"
+version = "2.2.0"
+url = "https://github.com/pyth-network/pyth-sdk-solidity/archive/refs/tags/v2.2.0.zip"
+checksum = "71431ac3fe4e61ce2b8abd649d3e741277ca4dba287c2a4291d040190b8fb8da"
+integrity = "845f9e662935eb347e9189da9b156f0062bcab1d372c7397777dbda609776a5c"

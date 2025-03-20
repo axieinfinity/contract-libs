@@ -11,6 +11,7 @@ evm_version = 'istanbul'
 use_literal_content = true
 extra_output = ["devdoc", "userdoc", "storagelayout"]
 fs_permissions = [{ access = "read-write", path = "./" }]
+allow_internal_expect_revert = true
 
 [fmt]
 tab_width = 2
@@ -20,7 +21,7 @@ bracket_spacing = true
 [rpc_endpoints]
 localhost = "http://localhost:8545"
 ethereum = "https://eth.llamarpc.com"
-ronin-mainnet = "https://api.roninchain.com/rpc"
+ronin-mainnet = "https://api-archived.roninchain.com/rpc"
 goerli = "https://ethereum-goerli.publicnode.com"
 ronin-testnet = "https://saigon-archive.roninchain.com/rpc"
 
@@ -32,4 +33,26 @@ runs = 256
 
 [dependencies]
 forge-std = { version = "1.8.2" }
-"@openzeppelin-contracts" = { version = "4.9.6" }
+chainlink = { version = "2.21.0", url = "https://github.com/smartcontractkit/chainlink/archive/refs/tags/v2.21.0.zip" }
+openzeppelin = { version = "4.9.6", url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip" }
+pyth = { version = "2.2.0", url = "https://github.com/pyth-network/pyth-sdk-solidity/archive/refs/tags/v2.2.0.zip" }
+
+[soldeer]
+# whether soldeer manages remappings
+remappings_generate = false
+
+# whether soldeer re-generates all remappings when installing, updating or uninstalling deps
+remappings_regenerate = false
+
+# whether to suffix the remapping with the version: `name-a.b.c`
+remappings_version = true
+
+# a prefix to add to the remappings ("@" would give `@name`)
+remappings_prefix = "@"
+
+# where to store the remappings ("txt" for `remappings.txt` or "config" for `foundry.toml`)
+# ignored when `soldeer.toml` is used as config (uses `remappings.txt`)
+remappings_location = "txt"
+
+# whether to install sub-dependencies or not. If true this wil install the dependencies of dependencies 1 level down.
+recursive_deps = true

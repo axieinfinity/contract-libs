@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { Strings } from "../../../dependencies/@openzeppelin-contracts-4.9.6/utils/Strings.sol";
+import { Strings } from "../../../dependencies/openzeppelin-4.9.6/contracts/utils/Strings.sol";
 
 /**
  * @title TransferFromHelper
