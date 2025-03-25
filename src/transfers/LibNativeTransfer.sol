@@ -7,6 +7,10 @@ import { LibErrorHandler } from "../LibErrorHandler.sol";
  * @title NativeTransferHelper
  */
 library LibNativeTransfer {
+  /*
+  * @dev Used in `safeTransfer` to send native token only. It is enough for performing storage reads and writes. 
+  * See https://github.com/Vectorized/solady/blob/main/src/utils/SafeTransferLib.sol
+  */
   uint256 internal constant DEFAULT_GAS_AMOUNT = 10_000;
 
   using LibErrorHandler for bool;
