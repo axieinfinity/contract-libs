@@ -16,8 +16,8 @@ contract UnwrapTokenAndTransferHelpers {
   error InvalidLength();
   error TotalValueNotMatch();
 
-  IWRON public immutable i_WRON;
-  IWRONHelper public immutable i_WRON_HELPER;
+  IWRON internal immutable i_WRON;
+  IWRONHelper internal immutable i_WRON_HELPER;
 
   constructor(address wron, address wronHelper) {
     i_WRON = IWRON(wron);
@@ -29,13 +29,25 @@ contract UnwrapTokenAndTransferHelpers {
     _requireOnlyWRONHelper();
   }
 
-  modifier matchLength(address payable[] memory recipients, uint256[] memory values) {
-    _requireMatchLength(recipients, values);
+  modifier validLength(address payable[] memory recipients, uint256[] memory values) {
+    _requireLengthValid(recipients, values);
     _;
   }
 
-  function _requireMatchLength(address payable[] memory recipients, uint256[] memory values) internal pure {
-    require(recipients.length == values.length, InvalidLength());
+  /// @dev Return the WRON contract address.
+  function getWRON() external view returns (IWRON) {
+    return i_WRON;
+  }
+
+  /// @dev Return the WRON helper contract address.
+  function getWRONHelper() external view returns (IWRONHelper) {
+    return i_WRON_HELPER;
+  }
+
+  /// @dev Revert if the length of `recipients` and `values` are not the same, and the length is not zero.
+  function _requireLengthValid(address payable[] memory recipients, uint256[] memory values) internal pure {
+    uint256 length = recipients.length;
+    require(length > 0 && length == values.length, InvalidLength());
   }
 
   /// @dev Revert if the sender is not WRON_HELPER.
@@ -87,7 +99,7 @@ contract UnwrapTokenAndTransferHelpers {
     uint256 total,
     address payable[] memory recipients,
     uint256[] memory values
-  ) internal matchLength(recipients, values) {
+  ) internal validLength(recipients, values) {
     bool unwrapped = _tryUnwrap({ paymentToken: paymentToken, value: total });
 
     uint256 length = recipients.length;
@@ -118,7 +130,7 @@ contract UnwrapTokenAndTransferHelpers {
     uint256 total,
     address payable[] memory recipients,
     uint256[] memory values
-  ) internal matchLength(recipients, values) {
+  ) internal validLength(recipients, values) {
     bool unwrapped = _tryUnwrapFrom({ paymentToken: paymentToken, from: from, value: total });
     uint256 length = recipients.length;
     uint256 sumValues;
