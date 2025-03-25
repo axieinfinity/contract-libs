@@ -7,7 +7,7 @@ import { LibNativeTransfer } from "../LibNativeTransfer.sol";
 import { LibTransferFromHelper } from "../LibTransferFromHelper.sol";
 import { LibTransferHelper } from "../LibTransferHelper.sol";
 
-contract UnwrapTokenHelper {
+contract UnwrapTokenAndTransferHelpers {
   using LibTransferFromHelper for address;
   using LibTransferHelper for address;
   using LibNativeTransfer for address payable;
