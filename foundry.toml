@@ -7,7 +7,7 @@ ffi = true
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 
 solc = '0.8.27'
-evm_version = 'istanbul'
+evm_version = 'cancun'
 use_literal_content = true
 extra_output = ["devdoc", "userdoc", "storagelayout"]
 fs_permissions = [{ access = "read-write", path = "./" }]
