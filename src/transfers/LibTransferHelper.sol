@@ -16,9 +16,9 @@ library LibTransferHelper {
    * @dev Transfers token and wraps result for the method caller to a recipient.
    */
   function safeTransfer(address token, address to, uint256 value) internal {
-    bytes4 selector = IERC20.transfer.selector;
-    (bool success, bytes memory data) = token.call(abi.encodeWithSelector(selector, to, value));
+    (bool success, bytes memory data) = token.call(abi.encodeCall(IERC20.transfer, (to, value)));
 
-    success.handleRevert(selector, data);
+    success = success && data.length == 0 && abi.decode(data, (bool));
+    success.handleRevert(IERC20.transfer.selector, data);
   }
 }
