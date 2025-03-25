@@ -12,6 +12,8 @@ use_literal_content = true
 extra_output = ["devdoc", "userdoc", "storagelayout"]
 fs_permissions = [{ access = "read-write", path = "./" }]
 allow_internal_expect_revert = true
+optimize = true
+optimizer_runs = 200
 
 [fmt]
 tab_width = 2
