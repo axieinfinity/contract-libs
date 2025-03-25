@@ -7,7 +7,16 @@ import { LibErrorHandler } from "../LibErrorHandler.sol";
  * @title NativeTransferHelper
  */
 library LibNativeTransfer {
+  uint256 internal constant DEFAULT_GAS_AMOUNT = 10_000;
+
   using LibErrorHandler for bool;
+
+  /**
+   * @dev Transfers Native Coin with fixed gas amount (for almost use cases).
+   */
+  function safeTransfer(address to, uint256 value) internal {
+    transfer(to, value, DEFAULT_GAS_AMOUNT);
+  }
 
   /**
    * @dev Transfers Native Coin and wraps result for the method caller to a recipient.
