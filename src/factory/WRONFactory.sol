@@ -11,15 +11,7 @@ library WRONFactory {
   }
 
   function createWRONHelper(address wron) internal returns (IWRONHelper) {
-    bytes memory creationCode = WRON_HELPER_CREATION_BYTECODE;
-    assembly {
-      let size := mload(creationCode)
-      let offset := add(creationCode, 0x20)
-      // replace wron address into the last 32 bytes of creation bytecode
-      mstore(add(offset, sub(size, 0x20)), wron)
-    }
-
-    return IWRONHelper(LibCreate.createViaCreationCode(creationCode));
+    return IWRONHelper(LibCreate.createWithConstructorArguments(WRON_HELPER_CREATION_BYTECODE, abi.encode(wron)));
   }
 
   // https://app.roninchain.com/tx/0x173b02466cb77851045468ff2ef8809e8c74378c026ecae8f7d7ef9d9c3b996c
