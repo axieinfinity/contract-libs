@@ -2,6 +2,10 @@
 pragma solidity ^0.8.0;
 
 interface IWRON {
+  function name() external returns (string memory);
+  function symbol() external returns (string memory);
+  function decimals() external returns (uint256);
+
   /**
    * @dev Deposit RON and increase balance WRON tokens of sender.
    */
