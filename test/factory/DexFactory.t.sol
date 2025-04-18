@@ -50,6 +50,7 @@ contract DexFactoryTest is Test {
     router.addLiquidity(address(tokenA), address(tokenB), 1000 ether, 2000 ether, 0, 0, provider, type(uint256).max);
     router.addLiquidityRON{ value: 4000 ether }(address(tokenA), 4000 ether, 0, 0, provider, type(uint256).max);
     vm.stopPrank();
+
     // swap
     address user = makeAddr("user");
     address[] memory path = new address[](3);
