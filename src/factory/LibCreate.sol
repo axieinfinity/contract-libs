@@ -12,10 +12,14 @@ library LibCreate {
     assembly {
       let constructorSize := mload(constructorArg)
       let creationCodeSize := mload(creationCode)
-      let offset := add(creationCode, 0x20)
-      // replace constructor argment into the last `constructorSize` bytes of creation bytecode
-      mstore(add(offset, sub(creationCodeSize, constructorSize)), mload(add(constructorArg, 0x20)))
+      let offset := add(add(creationCode, 0x20), sub(creationCodeSize, constructorSize))
+
+      let start := add(constructorArg, 0x20)
+      for { let index := 0 } lt(index, constructorArg) { index := add(index, 0x20) } {
+        mstore(add(offset, index), mload(add(start, index)))
+      }
     }
+
     return createViaCreationCode(creationCode);
   }
 

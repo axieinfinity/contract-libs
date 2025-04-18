@@ -16,7 +16,7 @@ contract WRONFactoryTest is Test {
     wronHelper = WRONFactory.createWRONHelper(address(wron));
   }
 
-  function test_WRONConfigs() external {
+  function test_WRONConfigs() external view {
     assertEq(wron.name(), "Wrapped Ronin");
     assertEq(wron.symbol(), "WRON");
     assertEq(wron.decimals(), 18);
@@ -39,7 +39,7 @@ contract WRONFactoryTest is Test {
     assertEq(user.balance, fund);
   }
 
-  function test_WRONHelperConfigs() external {
+  function test_WRONHelperConfigs() external view {
     assertEq(address(wronHelper.WRON()), address(wron));
   }
 

@@ -15,13 +15,7 @@ interface IKatanaRouter {
     uint256 _amountBMin,
     address _to,
     uint256 _deadline
-  )
-    external
-    returns (
-      uint256 _amountA,
-      uint256 _amountB,
-      uint256 _liquidity
-    );
+  ) external returns (uint256 _amountA, uint256 _amountB, uint256 _liquidity);
 
   function addLiquidityRON(
     address _token,
@@ -30,14 +24,7 @@ interface IKatanaRouter {
     uint256 _amountRONMin,
     address _to,
     uint256 _deadline
-  )
-    external
-    payable
-    returns (
-      uint256 _amountToken,
-      uint256 _amountRON,
-      uint256 _liquidity
-    );
+  ) external payable returns (uint256 _amountToken, uint256 _amountRON, uint256 _liquidity);
 
   function removeLiquidity(
     address _tokenA,
@@ -101,12 +88,10 @@ interface IKatanaRouter {
     uint256 _deadline
   ) external returns (uint256[] memory _amounts);
 
-  function swapExactRONForTokens(
-    uint256 _amountOutMin,
-    address[] calldata _path,
-    address _to,
-    uint256 _deadline
-  ) external payable returns (uint256[] memory _amounts);
+  function swapExactRONForTokens(uint256 _amountOutMin, address[] calldata _path, address _to, uint256 _deadline)
+    external
+    payable
+    returns (uint256[] memory _amounts);
 
   function swapTokensForExactRON(
     uint256 _amountOut,
@@ -124,30 +109,22 @@ interface IKatanaRouter {
     uint256 _deadline
   ) external returns (uint256[] memory _amounts);
 
-  function swapRONForExactTokens(
-    uint256 _amountOut,
-    address[] calldata _path,
-    address _to,
-    uint256 _deadline
-  ) external payable returns (uint256[] memory _amounts);
+  function swapRONForExactTokens(uint256 _amountOut, address[] calldata _path, address _to, uint256 _deadline)
+    external
+    payable
+    returns (uint256[] memory _amounts);
 
-  function quote(
-    uint256 _amountA,
-    uint256 _reserveA,
-    uint256 _reserveB
-  ) external pure returns (uint256 _amountB);
+  function quote(uint256 _amountA, uint256 _reserveA, uint256 _reserveB) external pure returns (uint256 _amountB);
 
-  function getAmountOut(
-    uint256 _amountIn,
-    uint256 _reserveIn,
-    uint256 _reserveOut
-  ) external pure returns (uint256 _amountOut);
+  function getAmountOut(uint256 _amountIn, uint256 _reserveIn, uint256 _reserveOut)
+    external
+    pure
+    returns (uint256 _amountOut);
 
-  function getAmountIn(
-    uint256 _amountOut,
-    uint256 _reserveIn,
-    uint256 _reserveOut
-  ) external pure returns (uint256 _amountIn);
+  function getAmountIn(uint256 _amountOut, uint256 _reserveIn, uint256 _reserveOut)
+    external
+    pure
+    returns (uint256 _amountIn);
 
   function getAmountsOut(uint256 _amountIn, address[] calldata _path) external view returns (uint256[] memory _amounts);
 

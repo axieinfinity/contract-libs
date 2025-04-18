@@ -36,25 +36,13 @@ interface IKatanaPair is IKatanaERC20 {
   /**
    * @dev Initializes once by the factory at time of deployment.
    */
-  function initialize(
-    address _token0,
-    address _token1,
-    address _admin,
-    string calldata _name,
-    string calldata _symbol
-  ) external;
+  function initialize(address _token0, address _token1, address _admin, string calldata _name, string calldata _symbol)
+    external;
 
   /**
    * @dev Returns pool reserves.
    */
-  function getReserves()
-    external
-    view
-    returns (
-      uint112 _reserve0,
-      uint112 _reserve1,
-      uint32 _blockTimestampLast
-    );
+  function getReserves() external view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast);
 
   /**
    * @dev Mints liquidity for `_to` address after transfered tokens into pool.
@@ -78,12 +66,7 @@ interface IKatanaPair is IKatanaERC20 {
    * This low-level function should be called from a contract which performs important safety
    * checks.
    */
-  function swap(
-    uint256 amount0Out,
-    uint256 amount1Out,
-    address _to,
-    bytes calldata
-  ) external;
+  function swap(uint256 amount0Out, uint256 amount1Out, address _to, bytes calldata) external;
 
   /**
    * @dev Forces reserves to match balances.

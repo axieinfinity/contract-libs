@@ -37,6 +37,14 @@ contract DexFactoryTest is Test {
     vm.deal(provider, 10_000 ether);
   }
 
+  function test_CorrectConfiguration() public view {
+    assertEq(factory.pairImplementation(), address(pairImpl));
+    assertEq(factory.treasury(), treasury);
+
+    assertEq(router.factory(), address(factory));
+    assertEq(router.WRON(), address(wron));
+  }
+
   function test_Dex_Fullflow() public {
     // create pair
     factory.createPair(address(tokenA), address(tokenB));
