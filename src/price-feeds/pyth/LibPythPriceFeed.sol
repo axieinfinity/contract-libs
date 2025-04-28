@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { PythStructs } from "../../../dependencies/pyth-2.2.0/PythStructs.sol";
+import { PythStructs } from "../../interfaces/PythStructs.sol";
 import { Math } from "../../../dependencies/openzeppelin-4.9.6/contracts/utils/math/Math.sol";
 import { LibPowMath } from "../../math/LibPowMath.sol";
-import { IPyth } from "../../../dependencies/pyth-2.2.0/IPyth.sol";
+import { IPyth } from "../../interfaces/IPyth.sol";
 
 struct PythPriceFeed {
   uint8 tokenInDecimal;

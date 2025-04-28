@@ -18,10 +18,3 @@ version = "4.9.6"
 url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip"
 checksum = "7af0307b0ad8560aa09405da10bd705fd189b544597695b2c3046b15ce637e47"
 integrity = "559f038c60d5352d61332f7b4e81d4e021b3d4b6688fd384d12a23aaf2649395"
-
-[[dependencies]]
-name = "pyth"
-version = "2.2.0"
-url = "https://github.com/pyth-network/pyth-sdk-solidity/archive/refs/tags/v2.2.0.zip"
-checksum = "71431ac3fe4e61ce2b8abd649d3e741277ca4dba287c2a4291d040190b8fb8da"
-integrity = "845f9e662935eb347e9189da9b156f0062bcab1d372c7397777dbda609776a5c"

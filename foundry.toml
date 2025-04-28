@@ -35,7 +35,6 @@ runs = 256
 forge-std = { version = "1.8.2" }
 chainlink = { version = "2.21.0", url = "https://github.com/smartcontractkit/chainlink/archive/refs/tags/v2.21.0.zip" }
 openzeppelin = { version = "4.9.6", url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip" }
-pyth = { version = "2.2.0", url = "https://github.com/pyth-network/pyth-sdk-solidity/archive/refs/tags/v2.2.0.zip" }
 
 [soldeer]
 # whether soldeer manages remappings
