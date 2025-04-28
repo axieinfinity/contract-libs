@@ -45,7 +45,7 @@ interface IKatanaPair is IKatanaERC20 {
   function getReserves() external view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast);
 
   /**
-   * @dev Mints liquidity for `_to` address after transfered tokens into pool.
+   * @dev Mints liquidity for `_to` address after transferred tokens into pool.
    *
    * This low-level function should be called from a contract which performs important safety
    * checks.
@@ -53,7 +53,7 @@ interface IKatanaPair is IKatanaERC20 {
   function mint(address _to) external returns (uint256 _liquidity);
 
   /**
-   * @dev Burns liquidity for `_to` address after transfered liquidity into pool.
+   * @dev Burns liquidity for `_to` address after transferred liquidity into pool.
    *
    * This low-level function should be called from a contract which performs important safety
    * checks.
