@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { Test } from "../../dependencies/forge-std-1.8.2/src/Test.sol";
-import { PythStructs } from "../../dependencies/pyth-2.2.0/PythStructs.sol";
+import { PythStructs } from "../../src/interfaces/PythStructs.sol";
 import { LibPowMath } from "../../src/math/LibPowMath.sol";
 import "../../src/price-feeds/pyth/LibPythPriceFeed.sol";
 import "../../dependencies/openzeppelin-4.9.6/contracts/utils/math/Math.sol";

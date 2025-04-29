@@ -1,6 +1,6 @@
 # contract-libs
 
-The collections of smart contracts that power the Axie Land Delegation.
+A collection of reusable Solidity libraries that can be used across multiple blockchain projects.
 
 ## Development
 
