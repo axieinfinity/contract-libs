@@ -6,7 +6,7 @@ ffi = true
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 
-solc = '0.8.23'
+solc = '0.8.29'
 evm_version = 'cancun'
 use_literal_content = true
 extra_output = ["devdoc", "userdoc", "storagelayout"]
