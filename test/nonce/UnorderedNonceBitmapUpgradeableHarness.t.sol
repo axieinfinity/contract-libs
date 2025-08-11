@@ -4,7 +4,7 @@ pragma solidity ^0.8.29;
 import { Test } from "../../dependencies/forge-std-1.8.2/src/Test.sol";
 import { UnorderedNonceBitMapUpgradeable } from "src/nonce/UnorderedNonceBitMapUpgradeable.sol";
 
-contract UnorderedNonceBitmapUpgradeableHarness is UnorderedNonceBitMapUpgradeable {
+contract UnorderedNonceBitMapUpgradeableHarness is UnorderedNonceBitMapUpgradeable {
   bytes32 private constant __location = 0x639e53e9f065f88f35351da50a7a338602f841a0bf1918d155fbc0b6e4e8e000;
 
   function getNonceBitmap(address from, uint256 wordPos) public view returns (uint256) {

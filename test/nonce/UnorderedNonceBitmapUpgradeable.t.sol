@@ -3,16 +3,16 @@ pragma solidity ^0.8.29;
 
 import { Test } from "../../dependencies/forge-std-1.8.2/src/Test.sol";
 import { UnorderedNonceBitMapUpgradeable } from "src/nonce/UnorderedNonceBitMapUpgradeable.sol";
-import { UnorderedNonceBitmapUpgradeableHarness } from "./UnorderedNonceBitmapUpgradeableHarness.t.sol";
+import { UnorderedNonceBitMapUpgradeableHarness } from "./UnorderedNonceBitMapUpgradeableHarness.t.sol";
 
 contract UnorderedNonceBitMapUpgradeableTest is Test {
-  UnorderedNonceBitmapUpgradeableHarness private harness;
+  UnorderedNonceBitMapUpgradeableHarness private harness;
 
   address private user1 = address(0x1);
   address private user2 = address(0x2);
 
   function setUp() public {
-    harness = new UnorderedNonceBitmapUpgradeableHarness();
+    harness = new UnorderedNonceBitMapUpgradeableHarness();
   }
 
   // Test bitmap positions calculation
