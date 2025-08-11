@@ -2,10 +2,10 @@
 pragma solidity ^0.8.29;
 
 import { Test } from "../../dependencies/forge-std-1.8.2/src/Test.sol";
-import { UnorderedNonceBitMapUpgradeable } from "src/nonce/UnorderedNonceBitmapUpgradeable.sol";
+import { UnorderedNonceBitMapUpgradeable } from "src/nonce/UnorderedNonceBitMapUpgradeable.sol";
 import { UnorderedNonceBitmapUpgradeableHarness } from "./UnorderedNonceBitmapUpgradeableHarness.t.sol";
 
-contract UnorderedNonceBitmapUpgradeableTest is Test {
+contract UnorderedNonceBitMapUpgradeableTest is Test {
   UnorderedNonceBitmapUpgradeableHarness private harness;
 
   address private user1 = address(0x1);
