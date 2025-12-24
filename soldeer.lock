@@ -8,8 +8,8 @@ integrity = "52944737dd1c3d6f05390541ecffdea3c3802fc0712916e40cf4bd314574303a"
 [[dependencies]]
 name = "forge-std"
 version = "1.8.2"
-url = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_8_2_19-05-2024_18:52:07_forge-std-1.8.2.zip"
-checksum = "88a37e1d79f60b8aad08c7bd50a7a5ef973fc172b1495028d0725a17f5a4976c"
+url = "https://github.com/foundry-rs/forge-std/archive/refs/tags/v1.8.2.zip"
+checksum = "5722d7de17220c27c9e7aeeb4d58f338632d6a5563c9b36157672b3722e0a069"
 integrity = "7db36e30b7e5ff6bd2a38ee5d634d811ed98fd7c684785f937fea3ac3df37111"
 
 [[dependencies]]
@@ -17,4 +17,4 @@ name = "openzeppelin"
 version = "4.9.6"
 url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip"
 checksum = "7af0307b0ad8560aa09405da10bd705fd189b544597695b2c3046b15ce637e47"
-integrity = "559f038c60d5352d61332f7b4e81d4e021b3d4b6688fd384d12a23aaf2649395"
+integrity = "185aaff26a0b125b71df410560cdbd19ab384fef2e3678995f2cd3b505b7ebeb"

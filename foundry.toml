@@ -1,7 +1,7 @@
 [profile.default]
 src = "src"
 out = "out"
-libs = ["lib"]
+libs = ["lib", "dependencies"]
 ffi = true
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
@@ -32,7 +32,7 @@ runs = 256
 runs = 256
 
 [dependencies]
-forge-std = { version = "1.8.2" }
+forge-std = { version = "1.8.2", url = "https://github.com/foundry-rs/forge-std/archive/refs/tags/v1.8.2.zip" }
 chainlink = { version = "2.21.0", url = "https://github.com/smartcontractkit/chainlink/archive/refs/tags/v2.21.0.zip" }
 openzeppelin = { version = "4.9.6", url = "https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v4.9.6.zip" }
 
