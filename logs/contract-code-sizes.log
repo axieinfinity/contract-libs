@@ -1,27 +1,16 @@
-| Contract                  | Size (kB) | Margin (kB) |
-|---------------------------|-----------|-------------|
-| LibErrorHandler           | 0.086     | 24.49       |
-| LibNativeTransfer         | 0.086     | 24.49       |
-| LibSafeRange              | 0.086     | 24.49       |
-| Math                      | 0.086     | 24.49       |
-| MockERC20                 | 3.704     | 20.872      |
-| MockERC721                | 3.964     | 20.612      |
-| Panic                     | 0.086     | 24.49       |
-| RONTransferHelper         | 0.086     | 24.49       |
-| RONTransferHelperExtended | 0.086     | 24.49       |
-| SafeCast                  | 0.086     | 24.49       |
-| SignedMath                | 0.086     | 24.49       |
-| StdStyle                  | 0.086     | 24.49       |
-| Strings                   | 0.086     | 24.49       |
-| TransferFromHelper        | 0.086     | 24.49       |
-| TransferHelper            | 0.086     | 24.49       |
-| console                   | 0.086     | 24.49       |
-| console2                  | 0.086     | 24.49       |
-| safeconsole               | 0.086     | 24.49       |
-| stdError                  | 0.592     | 23.984      |
-| stdJson                   | 0.086     | 24.49       |
-| stdMath                   | 0.086     | 24.49       |
-| stdStorage                | 0.086     | 24.49       |
-| stdStorageSafe            | 0.086     | 24.49       |
-| stdToml                   | 0.086     | 24.49       |
+| Contract                  | Size (B) | Margin (B) |
+|---------------------------|----------|------------|
+| LibErrorHandler           |       86 |     24,490 |
+| LibEventRange             |       86 |     24,490 |
+| LibNativeTransfer         |       86 |     24,490 |
+| LibSafeRange              |       86 |     24,490 |
+| Math                      |       86 |     24,490 |
+| Panic                     |       86 |     24,490 |
+| RONTransferHelper         |       86 |     24,490 |
+| RONTransferHelperExtended |       86 |     24,490 |
+| SafeCast                  |       86 |     24,490 |
+| SignedMath                |       86 |     24,490 |
+| Strings                   |       86 |     24,490 |
+| TransferFromHelper        |       86 |     24,490 |
+| TransferHelper            |       86 |     24,490 |
 
